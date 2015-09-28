@@ -3,5 +3,8 @@ Driven data bees classifier competition codes [http://www.drivendata.org/competi
 
 ## Competition description
 All pictures are 200x200, RGB, with two classes: Bumble bee or honey bee.
-Train set: 3969 pictures
-Test set: 992 pictures
+* Train set: 3969 pictures
+* Test set: 992 pictures
+* 
+## Code architecture
+* DataManager class takes care of loading and pre-treatment
