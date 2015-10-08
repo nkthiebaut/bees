@@ -16,3 +16,18 @@ def show_img(img_id, root='data/images', test=False):
     im = Image.open(path)
     im_np = np.array(im)
     plt.imshow(im_np)
+
+
+def get_image(path, img_id):
+    """
+    Get pixels values from image id
+    :param img_id: image id (int)
+    :return: numpy flattened array with integer pixels values (np.uint8 array)
+    """
+    filename = "{}.jpg".format(img_id)
+    filepath = os.path.join(path, filename)
+    pixels = np.array(Image.open(filepath), dtype=np.uint8)
+    if pixels.shape[2] == 4:
+        print 'Warning: Image ' + str(img_id) + ' is RGBA (alpha), converting to RGB.'
+        pixels = pixels[:, :, :3]
+    return pixels.flatten()

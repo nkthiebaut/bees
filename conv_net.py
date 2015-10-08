@@ -13,6 +13,8 @@ from lasagne import layers
 from lasagne.updates import nesterov_momentum
 from nolearn.lasagne import NeuralNet
 
+from DataManager import DataManager
+
 nouri_net = NeuralNet(
     layers=[
         ('input', layers.InputLayer),
@@ -41,8 +43,11 @@ nouri_net = NeuralNet(
     verbose=1,
     )
 
+DM = DataManager()
+DM.normalize()
+DM.save_to_lasagne_format()
 
-X, y, labels = cPickle.load(open('data.pkl', 'rb'))
+X, y = cPickle.load(open('data.pkl', 'rb'))
 nouri_net.fit(X, y)
 
 with open('nouri_net.pkl', 'wb') as f:
