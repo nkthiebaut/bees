@@ -5,12 +5,14 @@ __author__ = 'thiebaut'
 __date__ = '02/10/15'
 
 import cPickle
+import pandas as pd
 
 from lasagne import layers
 from lasagne.updates import nesterov_momentum
 from nolearn.lasagne import NeuralNet
 
 from DataManager import DataManager
+from utils import make_submission_file
 
 nouri_net = NeuralNet(
     layers=[
@@ -40,17 +42,14 @@ nouri_net = NeuralNet(
     verbose=1,
     )
 
-DM = DataManager()
-DM.normalize()
-DM.save_to_lasagne_format(filename='data.pkl')
-
-X, y = cPickle.load(open('data.pkl', 'rb'))
+X, y = cPickle.load(open('train.pkl', 'rb'))
 nouri_net.fit(X, y)
 
 with open('nouri_net.pkl', 'wb') as f:
     cPickle.dump(nouri_net, f, -1)
 
-DM_test = DataManager(test=True)
-DM_test.normalize()
-X_test = DM_test.get_reshaped_features()
-predictions = nouri_net.predict_proba(X)
+X_test, y, images_id = cPickle.load(open('test.pkl', 'rb'))
+
+predictions = nouri_net.predict_proba(X_test)
+
+make_submission_file(predictions, images_id)

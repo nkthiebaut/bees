@@ -85,11 +85,16 @@ class DataManager(object):
             with open('std_scaler.pkl', 'wb') as f:
                 cPickle.dump(self.std_scaler, f)
 
-    def save_to_lasagne_format(self, filename='data.pkl'):
+    def save_to_lasagne_format(self, filename=None):
         """  Save reshaped feature matrix, labels and ids in a pickle file
         :param filename: file where datas are saved
         """
-        cPickle.dump((self.get_reshaped_features(), self.y), open(filename, 'wb'))
+        if filename is None:
+            filename = 'test.pkl' if self.test else 'train.pkl'
+        cPickle.dump(self.get_in_lasagne_format(), open(filename, 'wb'))
+
+    def get_in_lasagne_format(self):
+        return (self.get_reshaped_features(), self.y, self.images_id)
 
     def reshape(self):
         """ Change feature_matrix shape for compatibility w. lasagne """
