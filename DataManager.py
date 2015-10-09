@@ -11,7 +11,6 @@ import pandas as pd
 import cPickle
 
 from tqdm import tqdm
-from PIL import Image
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
 
@@ -90,13 +89,13 @@ class DataManager(object):
         """  Save reshaped feature matrix, labels and ids in a pickle file
         :param filename: file where datas are saved
         """
-        cPickle.dump(self.get_reshaped(), self.y, open(filename, 'wb'))
+        cPickle.dump((self.get_reshaped_features(), self.y), open(filename, 'wb'))
 
     def reshape(self):
         """ Change feature_matrix shape for compatibility w. lasagne """
         self.X = self.X.reshape((self.n_images, 200, 200, 3))
 
-    def get_reshaped(self):
+    def get_reshaped_features(self):
         """ Get numpy matrix with shape compatible with lasagne
         :return: reshaped matrix
         """
@@ -106,7 +105,11 @@ class DataManager(object):
         """ Show image with id number img_id
         :param img_id: image id (int)
         """
-        loc = np.where(np.array(self.images_id) == img_id)[0]
+        loc = np.where(self.images_id == img_id)[0]
         if len(loc) != 1:
             raise IndexError('Image with id'+str(img_id)+'cannot be found.')
         plt.imshow(self.X[loc].reshape(200, 200, 3))
+
+    def __getitem__(self, index):
+        """ Overload the [] operator """
+        return self.X[index].reshape(200, 200, 3)

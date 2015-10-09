@@ -7,7 +7,7 @@ __date__ = '01/10/15'
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-
+from datetime import date
 from PIL import Image
 
 def show_img(img_id, root='data/images', test=False):
@@ -31,3 +31,21 @@ def get_image(path, img_id):
         print 'Warning: Image ' + str(img_id) + ' is RGBA (alpha), converting to RGB.'
         pixels = pixels[:, :, :3]
     return pixels.flatten()
+
+def make_predictions(output_filepath="submission"+str(date.today())+".csv"):
+    prediction_df = submission_format_df.copy()
+
+    # create features
+    test_features = create_feature_matrix(submission_format_df)
+    test_features_stand = ss.transform(test_features)
+    test_features_pca = pca.transform(test_features_stand)
+
+    # predict with the best estimator from the grid search
+    preds = gs.best_estimator_.predict_proba(test_features_pca)
+
+    # copy the predictions to the dataframe with the ids and
+    # write it out to a file
+    prediction_df.genus = preds[:, 1]
+    prediction_df.to_csv(output_filepath)
+
+    return prediction_df

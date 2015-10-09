@@ -4,9 +4,6 @@
 __author__ = 'thiebaut'
 __date__ = '02/10/15'
 
-# Daniel Nouri's example w. lasagne and nolearn
-# http://danielnouri.org/notes/2014/12/17/using-convolutional-neural-nets-to-detect-facial-keypoints-tutorial/
-
 import cPickle
 
 from lasagne import layers
@@ -45,7 +42,7 @@ nouri_net = NeuralNet(
 
 DM = DataManager()
 DM.normalize()
-DM.save_to_lasagne_format()
+DM.save_to_lasagne_format(filename='data.pkl')
 
 X, y = cPickle.load(open('data.pkl', 'rb'))
 nouri_net.fit(X, y)
@@ -53,3 +50,7 @@ nouri_net.fit(X, y)
 with open('nouri_net.pkl', 'wb') as f:
     cPickle.dump(nouri_net, f, -1)
 
+DM_test = DataManager(test=True)
+DM_test.normalize()
+X_test = DM_test.get_reshaped_features()
+predictions = nouri_net.predict_proba(X)
