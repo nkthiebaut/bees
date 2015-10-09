@@ -28,6 +28,7 @@ class DataManager(object):
 
         self.X = None
         self.y = pd.read_csv("data/"+labels_file, index_col=0)
+        self.n_classes = self.y['genus'].value_counts()
         self.images_id = np.array(self.y.index.tolist())
         self.y = np.array(self.y, dtype=np.float32)
 
@@ -91,7 +92,8 @@ class DataManager(object):
         """
         if filename is None:
             filename = 'test.pkl' if self.test else 'train.pkl'
-        cPickle.dump(self.get_in_lasagne_format(), open(filename, 'wb'))
+        with open(filename, 'wb') as f:
+            cPickle.dump(self.get_in_lasagne_format(), f, -1)
 
     def get_in_lasagne_format(self):
         return (self.get_reshaped_features(), self.y, self.images_id)
@@ -114,6 +116,23 @@ class DataManager(object):
         if len(loc) != 1:
             raise IndexError('Image with id'+str(img_id)+'cannot be found.')
         plt.imshow(self.X[loc].reshape(200, 200, 3))
+
+    def equalize_classes(self, random=False):
+        """ Copy underepresented class until equality is reached """
+        # Get classes occurrences difference
+        delta = int(reduce(lambda x, y: y-x, self.n_classes))
+
+        j = 0
+        for i in range(delta):
+            while True:
+                if random:
+                    j = np.random.randint(0, self.n_images)
+                else:
+                    j = (j+1)%self.n_images
+                if self.y[j] == 0.:
+                    print 'ok'
+                    break
+            map(lambda x: np.append(x, x[j]), [self.X, self.y, self.images_id])
 
     def __getitem__(self, index):
         """ Overload the [] operator """

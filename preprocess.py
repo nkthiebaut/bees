@@ -11,6 +11,7 @@ from DataManager import DataManager
 DM = DataManager()
 DM.normalize()
 DM.shuffle()
+DM.equalize_classes()
 DM.save_to_lasagne_format(filename='train.pkl')
 
 DM = DataManager(test=True)
