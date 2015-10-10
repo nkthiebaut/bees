@@ -4,8 +4,6 @@
 __author__ = 'thiebaut'
 __date__ = '09/10/15'
 
-import cPickle
-
 from DataManager import DataManager
 
 DM = DataManager()

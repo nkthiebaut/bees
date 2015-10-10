@@ -5,13 +5,10 @@ __author__ = 'thiebaut'
 __date__ = '02/10/15'
 
 import cPickle
-import pandas as pd
 
 from lasagne import layers
-from lasagne.updates import nesterov_momentum
 from nolearn.lasagne import NeuralNet
 
-from DataManager import DataManager
 from utils import make_submission_file
 
 nouri_net = NeuralNet(
@@ -42,7 +39,7 @@ nouri_net = NeuralNet(
     verbose=1,
     )
 
-X, y = cPickle.load(open('train.pkl', 'rb'))
+X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
 nouri_net.fit(X, y)
 
 with open('nouri_net.pkl', 'wb') as f:

@@ -10,7 +10,8 @@ import numpy as np
 import pandas as pd
 import cPickle
 
-from tqdm import tqdm
+# from tqdm import tqdm
+from progressbar import ProgressBar
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
 
@@ -39,7 +40,8 @@ class DataManager(object):
 
     def prepare_data(self):
         """ Treat the pictures """
-        for i, img_id in tqdm(enumerate(self.images_id)):
+        pbar = ProgressBar()
+        for i, img_id in pbar(enumerate(self.images_id)):
             features = get_image(self.path, img_id)
             if self.X is None:
                 self.n_features = features.shape[0]
