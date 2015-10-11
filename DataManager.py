@@ -9,6 +9,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 import cPickle
+import sys
+sys.setrecursionlimit(10000)
 
 from tqdm import tqdm
 from sklearn.utils import shuffle
@@ -97,10 +99,6 @@ class DataManager(object):
 
     def get_in_lasagne_format(self):
         return (self.get_reshaped_features(), self.y, self.images_id)
-
-    def reshape(self):
-        """ Change feature_matrix shape for compatibility w. lasagne """
-        self.X = self.X.reshape((self.n_images, 200, 200, 3))
 
     def get_reshaped_features(self):
         """ Get numpy matrix with shape compatible with lasagne
