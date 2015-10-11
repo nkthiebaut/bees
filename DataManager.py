@@ -10,8 +10,7 @@ import numpy as np
 import pandas as pd
 import cPickle
 
-# from tqdm import tqdm
-from progressbar import ProgressBar, Percentage, Bar
+from tqdm import tqdm
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
 
@@ -40,8 +39,7 @@ class DataManager(object):
 
     def prepare_data(self):
         """ Treat the pictures """
-        pbar = ProgressBar(widgets=[Percentage(), Bar()]).start()
-        for i, img_id in enumerate(self.images_id):
+        for i, img_id in tqdm(enumerate(self.images_id)):
             features = get_image(self.path, img_id)
             if self.X is None:
                 self.n_features = features.shape[0]
@@ -52,8 +50,6 @@ class DataManager(object):
                 print "Error on image {}".format(img_id)
 
             self.X[i, :] = features
-            pbar.update(i)
-        pbar.finish()
 
 
     def shuffle(self):
@@ -73,7 +69,7 @@ class DataManager(object):
             self.std_scaler = []
         # Normalize over each RGB channel separately
         normalized = []
-        for i in range(3):
+        for i in tqdm(range(3)):
             if not self.test:
                 ss = StandardScaler().fit(rgb[:, :, i])
                 self.std_scaler.append(ss)
@@ -110,7 +106,8 @@ class DataManager(object):
         """ Get numpy matrix with shape compatible with lasagne
         :return: reshaped matrix
         """
-        return self.X.reshape((self.n_images, 200, 200, 3))
+        # return self.X.reshape(self.n_images, 200, 200, 3)
+        return self.X.reshape(-1, 3, 200, 200)
 
     def show(self, img_id):
         """ Show image with id number img_id
