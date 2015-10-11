@@ -11,7 +11,7 @@ import pandas as pd
 import cPickle
 
 # from tqdm import tqdm
-from progressbar import ProgressBar
+from progressbar import ProgressBar, Percentage, Bar
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
 
@@ -40,8 +40,8 @@ class DataManager(object):
 
     def prepare_data(self):
         """ Treat the pictures """
-        pbar = ProgressBar()
-        for i, img_id in pbar(enumerate(self.images_id)):
+        pbar = ProgressBar(widgets=[Percentage(), Bar()]).start()
+        for i, img_id in enumerate(self.images_id):
             features = get_image(self.path, img_id)
             if self.X is None:
                 self.n_features = features.shape[0]
@@ -52,6 +52,8 @@ class DataManager(object):
                 print "Error on image {}".format(img_id)
 
             self.X[i, :] = features
+            pbar.update(i)
+        pbar.finish()
 
 
     def shuffle(self):
