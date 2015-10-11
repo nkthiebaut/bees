@@ -45,7 +45,7 @@ nouri_net.fit(X, y)
 with open('nouri_net.pkl', 'wb') as f:
     cPickle.dump(nouri_net, f, -1)
 
-X_test, y, images_id = cPickle.load(open('test.pkl', 'rb'))
+X_test, _, images_id = cPickle.load(open('test.pkl', 'rb'))
 
 predictions = nouri_net.predict_proba(X_test)
 
