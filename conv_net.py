@@ -14,7 +14,7 @@ from lasagne.layers import DropoutLayer
 from lasagne.layers import Conv2DLayer
 from lasagne.layers import MaxPool2DLayer
 from lasagne.nonlinearities import softmax
-from lasagne.updates import nesterov_momentum
+from lasagne.updates import nesterov_momentum, sgd, adam
 
 from nolearn.lasagne import NeuralNet
 from nolearn.lasagne import BatchIterator
@@ -28,8 +28,8 @@ from utils import regularization_objective
 X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
 
 import numpy as np
-#X = X[:-1]
-#y = y.reshape(-1,1).astype(np.float32)
+X = X[:-1]
+y = y.astype(np.float32)[:-1]
 
 print "Train:"
 print "X.shape:", X.shape
@@ -54,9 +54,9 @@ layers0 = [
 #    (MaxPool2DLayer, {'pool_size': 2}),
 
     # two dense layers with dropout
-#    (DenseLayer, {'num_units': 64}),
+    (DenseLayer, {'num_units': 500}),
 #    (DropoutLayer, {}),
-    (DenseLayer, {'num_units': 64}),
+    (DenseLayer, {'num_units': 500}),
 
     # the output layer
     (DenseLayer, {'num_units': 1, 'nonlinearity': softmax}),
@@ -75,19 +75,19 @@ nouri_net = NeuralNet(
     objective=regularization_objective,
     objective_lambda2=0.0025,
 
-    train_split=TrainSplit(eval_size=0.25),
+    train_split=TrainSplit(eval_size=0.25, stratify=False),
     #regression=True,
     max_epochs=10,
     verbose=3,
     )
-
+"""
 from nolearn.lasagne import PrintLayerInfo
 nouri_net.verbose = 3
 nouri_net.initialize()
 layer_info = PrintLayerInfo()
 layer_info(nouri_net)
-
 #exit(0)
+"""
 nouri_net.fit(X, y)
 
 with open('nouri_net.pkl', 'wb') as f:
