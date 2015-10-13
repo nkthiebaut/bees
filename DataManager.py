@@ -105,7 +105,7 @@ class DataManager(object):
         :return: reshaped matrix
         """
         # return self.X.reshape(self.n_images, 200, 200, 3)
-        return self.X.reshape(-1, 3, 200, 200)
+        return np.swapaxes(self.X.reshape(-1, 200, 200, 3), 1, 3)
 
     def show(self, img_id):
         """ Show image with id number img_id
