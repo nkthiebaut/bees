@@ -9,10 +9,19 @@ import sys
 sys.setrecursionlimit(10000)
 
 from lasagne import layers
+from lasagne.layers import DenseLayer
+from lasagne.layers import InputLayer
+from lasagne.layers import DropoutLayer
+from lasagne.layers import Conv2DLayer
+from lasagne.layers import MaxPool2DLayer
+
+from lasagne.layers import get_all_params
+
 from nolearn.lasagne import NeuralNet
 from lasagne.nonlinearities import softmax
 from utils import make_submission_file
 
+"""
 layers0 = [
     # layer dealing with the input data
     (InputLayer, {'shape': (None, X.shape[1], X.shape[2], X.shape[3])}),
@@ -38,27 +47,28 @@ layers0 = [
 
     # the output layer
     (DenseLayer, {'num_units': 10, 'nonlinearity': softmax}),
-]
+]"""
 
 nouri_net = NeuralNet(
     layers=[
         ('input', layers.InputLayer),
         ('conv1', layers.Conv2DLayer),
         ('pool1', layers.MaxPool2DLayer),
-        ('conv2', layers.Conv2DLayer),
-        ('pool2', layers.MaxPool2DLayer),
-        ('conv3', layers.Conv2DLayer),
-        ('pool3', layers.MaxPool2DLayer),
-        ('hidden4', layers.DenseLayer),
+       # ('conv2', layers.Conv2DLayer),
+        #('pool2', layers.MaxPool2DLayer),
+        #('conv3', layers.Conv2DLayer),
+        #('pool3', layers.MaxPool2DLayer),
+        #('hidden4', layers.DenseLayer),
         ('hidden5', layers.DenseLayer),
         ('output', layers.DenseLayer),
         ],
-    input_shape=(None, 1, 96, 96),
+    input_shape=(None, 3, 200, 200),
     conv1_num_filters=32, conv1_filter_size=(3, 3), pool1_pool_size=(2, 2),
-    conv2_num_filters=64, conv2_filter_size=(2, 2), pool2_pool_size=(2, 2),
-    conv3_num_filters=128, conv3_filter_size=(2, 2), pool3_pool_size=(2, 2),
-    hidden4_num_units=500, hidden5_num_units=500,
-    output_num_units=30, output_nonlinearity=softmax,
+    #conv2_num_filters=64, conv2_filter_size=(2, 2), pool2_pool_size=(2, 2),
+    #conv3_num_filters=128, conv3_filter_size=(2, 2), pool3_pool_size=(2, 2),
+    #hidden4_num_units=500
+    hidden5_num_units=500,
+    output_num_units=1, output_nonlinearity=softmax,
 
     update_learning_rate=0.01,
     update_momentum=0.9,
@@ -75,6 +85,13 @@ print "Train:"
 print "X.shape:", X.shape
 print "y.shape:", y.shape
 
+from nolearn.lasagne import PrintLayerInfo
+nouri_net.verbose = 3
+nouri_net.initialize()
+layer_info = PrintLayerInfo()
+layer_info(nouri_net)
+
+#exit(0)
 nouri_net.fit(X, y)
 
 with open('nouri_net.pkl', 'wb') as f:

@@ -32,7 +32,7 @@ class DataManager(object):
         self.y = pd.read_csv("data/"+labels_file, index_col=0)
         self.n_classes = self.y['genus'].value_counts()
         self.images_id = np.array(self.y.index.tolist())
-        self.y = np.array(self.y['genus']).astype(np.float32)
+        self.y = np.array(self.y['genus']).astype(np.float32).reshape(-1,1)
 
         self.n_images = self.y.shape[0]
         self.n_features = None
