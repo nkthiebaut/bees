@@ -7,6 +7,7 @@ __date__ = '02/10/15'
 import cPickle
 import sys
 sys.setrecursionlimit(10000)
+import numpy as np
 
 from lasagne.layers import DenseLayer
 from lasagne.layers import InputLayer
@@ -27,9 +28,8 @@ from utils import regularization_objective
 
 X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
 
-import numpy as np
-X = X[:-1]
-y = y.astype(np.float32)[:-1]
+X = np.array(X).astype(np.float32)[:-1]
+y = np.array(y).astype(np.int32)[:-1]
 
 print "Train:"
 print "X.shape:", X.shape
