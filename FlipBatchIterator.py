@@ -18,3 +18,5 @@ class FlipBatchIterator(BatchIterator):
         Xb[indices] = Xb[indices, :, :, ::-1]
 
         return Xb
+
+
