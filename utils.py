@@ -12,7 +12,7 @@ import pandas as pd
 
 from PIL import Image
 from nolearn.lasagne import objective
-
+from lasagne.layers import get_all_params
 
 def show_img(img_id, root='data/images', test=False):
     dir = 'test' if test else 'train'

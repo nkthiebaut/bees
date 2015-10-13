@@ -14,7 +14,6 @@ from lasagne.layers import DropoutLayer
 from lasagne.layers import Conv2DLayer
 from lasagne.layers import MaxPool2DLayer
 from lasagne.nonlinearities import softmax
-from lasagne.layers import get_all_params
 from lasagne.updates import nesterov_momentum
 
 from nolearn.lasagne import NeuralNet
@@ -22,10 +21,13 @@ from nolearn.lasagne import BatchIterator
 from nolearn.lasagne import TrainSplit
 
 from utils import make_submission_file
+from utils import regularization_objective
 
-import numpy as np
+
 
 X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
+
+import numpy as np
 #X = X[:-1]
 #y = y.reshape(-1,1).astype(np.float32)
 
@@ -75,7 +77,7 @@ nouri_net = NeuralNet(
 
     train_split=TrainSplit(eval_size=0.25),
     #regression=True,
-    max_epochs=1000,
+    max_epochs=10,
     verbose=3,
     )
 
@@ -93,6 +95,9 @@ with open('nouri_net.pkl', 'wb') as f:
 
 X_test, _, images_id = cPickle.load(open('test.pkl', 'rb'))
 
+print "Test:"
+print "X_test.shape:", X_test.shape
+print "y.shape:", y.shape
 predictions = nouri_net.predict_proba(X_test)
 
 print predictions
