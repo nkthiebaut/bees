@@ -65,9 +65,9 @@ layers0 = [
 nouri_net = NeuralNet(
     layers0,
 
-    update=nesterov_momentum,
-    update_learning_rate=0.01,
-    update_momentum=0.9,
+    update=adam,
+    update_learning_rate=0.0001,
+    #update_momentum=0.9,
 
     #batch_iterator_train=BatchIterator(batch_size=64),
     #batch_iterator_test=BatchIterator(batch_size=62),
