@@ -15,3 +15,4 @@ All pictures are 200x200, RGB, with two classes: Bumble bee or honey bee.
 * Bee's [benchmark notebook](http://nbviewer.ipython.org/github/drivendata/benchmarks/blob/master/bees-benchmark.ipynb) on DrivenData.org 
 * [Lasagne tutorials](http://lasagne.readthedocs.org/en/latest/user/tutorial.html)
 * [NoLearn mnist tutorial](http://nbviewer.ipython.org/github/dnouri/nolearn/blob/master/docs/notebooks/CNN_tutorial.ipynb)
+* [Team o_O code](https://github.com/sveitser/kaggle_diabetic) for diabetic rethinopathy Kagggle competition (3rd place using lasagne)
