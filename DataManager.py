@@ -32,7 +32,7 @@ class DataManager(object):
         self.y = pd.read_csv("data/"+labels_file, index_col=0)
         self.n_classes = self.y['genus'].value_counts()
         self.images_id = np.array(self.y.index.tolist())
-        self.y = np.array(self.y['genus']).astype(np.float32)
+        self.y = np.array(self.y['genus']).astype(np.int32)#.astype(np.float32).reshape(-1, 1)
 
         self.n_images = self.y.shape[0]
         self.n_features = None
@@ -61,11 +61,11 @@ class DataManager(object):
 
     def normalize(self):
         """  Normalize all RGB channels separately, accross the training set """
-        #self.ss = StandardScaler()
+        # self.ss = StandardScaler()
         rgb = self.X.reshape(self.n_images, 200*200, 3).astype(np.float32)
 
         if self.test:
-            with  open('std_scaler.pkl', 'rb') as f:
+            with open('std_scaler.pkl', 'rb') as f:
                 self.std_scaler = cPickle.load(f)
         else:
             self.std_scaler = []
