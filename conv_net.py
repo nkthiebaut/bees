@@ -100,6 +100,8 @@ print "X_test.shape:", X_test.shape
 print "y.shape:", y.shape
 predictions = nouri_net.predict_proba(X_test)
 
-print predictions
+values, counts = np.unique(predictions, return_counts=True)
+for v, c in zip(values,counts):
+    print 'Number of {}: {}'.format(v,c)
 
 make_submission_file(predictions, images_id)
