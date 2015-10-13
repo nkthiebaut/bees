@@ -11,6 +11,8 @@ from datetime import date
 import pandas as pd
 
 from PIL import Image
+from nolearn.lasagne import objective
+
 
 def show_img(img_id, root='data/images', test=False):
     dir = 'test' if test else 'train'
@@ -38,3 +40,18 @@ def make_submission_file(predictions ,images_id, output_filepath="submission_"+s
     predictions_df = pd.DataFrame(predictions, index=images_id, columns=['genus'])
     predictions_df.index.names = ['id']
     predictions_df.to_csv(output_filepath)
+
+
+def regularization_objective(layers, lambda1=0., lambda2=0., *args, **kwargs):
+    # default loss
+    losses = objective(layers, *args, **kwargs)
+    # get the layers' weights, but only those that should be regularized
+    # (i.e. not the biases)
+    weights = get_all_params(layers[-1], regularizable=True)
+    # sum of absolute weights for L1
+    sum_abs_weights = sum([abs(w).sum() for w in weights])
+    # sum of squared weights for L2
+    sum_squared_weights = sum([(w ** 2).sum() for w in weights])
+    # add weights to regular loss
+    losses += lambda1 * sum_abs_weights + lambda2 * sum_squared_weights
+    return losses
