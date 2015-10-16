@@ -10,14 +10,14 @@ import numpy as np
 import pandas as pd
 import cPickle
 import sys
-sys.setrecursionlimit(10000)
+sys.setrecursionlimit(1000000)
 
 from tqdm import tqdm
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
 
-from utils import get_image
 
+from utils import get_image
 
 class DataManager(object):
     """ DataManager class that imports and pre-treat bees pictures """
@@ -52,16 +52,19 @@ class DataManager(object):
                 print "Error on image {}".format(img_id)
 
             self.X[i, :] = features
+        print "Feature_matrix shape: {}".format(self.X.shape)
 
 
     def shuffle(self):
         """ Shuffle the features, labels and ids"""
+        print "{} shuffles.".format(type(self).__name__)
         self.X, self.y, self.images_id = shuffle(self.X, self.y, self.images_id,
                                                  random_state=42)
 
     def normalize(self):
         """  Normalize all RGB channels separately, accross the training set """
         # self.ss = StandardScaler()
+        print "{} is normalizing per RGB channel.".format(type(self).__name__)
         rgb = self.X.reshape(self.n_images, 200*200, 3).astype(np.float32)
 
         if self.test:
@@ -89,13 +92,14 @@ class DataManager(object):
                 cPickle.dump(self.std_scaler, f)
 
     def save_to_lasagne_format(self, filename=None):
-        """  Save reshaped feature matrix, labels and ids in a pickle file
+        """  Save reshaped feature matrix, labels and ids in a cPickle file
         :param filename: file where datas are saved
         """
+        print "{} saving datas.".format(type(self).__name__)
         if filename is None:
             filename = 'test.pkl' if self.test else 'train.pkl'
         with open(filename, 'wb') as f:
-            cPickle.dump(self.get_in_lasagne_format(), f, -1)
+            cPickle.dump(self.get_in_lasagne_format(), f, protocol=-1)
 
     def get_in_lasagne_format(self):
         return (self.get_reshaped_features(), self.y, self.images_id)
@@ -118,20 +122,31 @@ class DataManager(object):
 
     def equalize_classes(self, random=False):
         """ Copy underepresented class until equality is reached """
+        print "{} is equalizing classes.".format(type(self).__name__)
         # Get classes occurrences difference
-        delta = int(reduce(lambda x, y: y-x, self.n_classes))
+        delta = int(reduce(lambda x, y: x-y, self.n_classes))
 
+        X_append = np.zeros((delta, self.n_features))
+        y_append = np.zeros(delta)
+        images_id_append = np.zeros(delta)
         j = 0
-        for i in range(delta):
+        for i in tqdm(range(delta)):
             while True:
                 if random:
                     j = np.random.randint(0, self.n_images)
                 else:
                     j = (j+1)%self.n_images
-                if self.y[j] == 0.:
-                    print 'ok'
+                if self.y[j] == np.int32(0):
                     break
-            map(lambda x: np.append(x, x[j]), [self.X, self.y, self.images_id])
+#           X_append[i, :] = self.X[j]
+            images_id_append[i] = self.images_id[j]
+        self.X = np.append(self.X, X_append, axis=0)
+        self.y = np.append(self.y, y_append)
+        self.images_id = np.append(self.images_id, images_id_append)
+
+        print "Feature matrix shape after equalization: {}".format(self.X.shape)
+        #map(lambda x: np.append(x, x[j]), [self.X, self.y, self.images_id])
+        self.n_images += delta
 
     def __getitem__(self, index):
         """ Overload the [] operator """

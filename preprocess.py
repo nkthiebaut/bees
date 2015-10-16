@@ -7,10 +7,12 @@ __date__ = '09/10/15'
 from DataManager import DataManager
 
 DM = DataManager()
-DM.normalize()
 DM.shuffle()
-# DM.equalize_classes()
+DM.normalize()
+#DM.equalize_classes()
+#DM.shuffle()
 DM.save_to_lasagne_format(filename='train.pkl')
+exit()
 
 DM = DataManager(test=True)
 DM.normalize()
