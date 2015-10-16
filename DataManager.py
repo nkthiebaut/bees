@@ -41,6 +41,8 @@ class DataManager(object):
 
     def prepare_data(self):
         """ Treat the pictures """
+        tmp = 'test' if self.test else 'train'
+        print " ---- Loading "+tmp+" set ----"
         for i, img_id in tqdm(enumerate(self.images_id)):
             features = get_image(self.path, img_id)
             if self.X is None:
@@ -97,9 +99,11 @@ class DataManager(object):
         """
         print "{} saving datas.".format(type(self).__name__)
         if filename is None:
-            filename = 'test.pkl' if self.test else 'train.pkl'
+            filename = 'test.npz' if self.test else 'train.npz'
+            #filename = 'test.pkl' if self.test else 'train.pkl'
         with open(filename, 'wb') as f:
-            cPickle.dump(self.get_in_lasagne_format(), f, protocol=-1)
+            np.savez(f, np.swapaxes(self.X.reshape(-1, 200, 200, 3), 1, 3), self.y, self.images_id)
+            # cPickle.dump(self.get_in_lasagne_format(), f, protocol=-1)
 
     def get_in_lasagne_format(self):
         return (self.get_reshaped_features(), self.y, self.images_id)
@@ -126,7 +130,7 @@ class DataManager(object):
         # Get classes occurrences difference
         delta = int(reduce(lambda x, y: x-y, self.n_classes))
 
-        X_append = np.zeros((delta, self.n_features))
+        X_append = np.zeros((delta, self.n_features), dtype=self.X.dtype)
         y_append = np.zeros(delta)
         images_id_append = np.zeros(delta)
         j = 0

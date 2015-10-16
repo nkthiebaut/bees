@@ -43,38 +43,10 @@ def make_submission_file(predictions ,images_id, output_filepath="submission_"+s
     predictions_df.index.names = ['id']
     predictions_df.to_csv(output_filepath)
 
-
-def equalize_classes(X, y, images_id, random=False):
-    """ Copy underepresented class until equality is reached """
-    print "Equalizing classes."
-    # Get classes occurrences difference
-    delta = abs(len(np.where(y==0)[0]) - len(np.where(y==1)[0]))
-    n_images= X.shape[0]
-    width = X.shape[2]
-    n_features = width*width
-    
-    X_append = np.zeros((delta, 3, width, width))
-    y_append = np.zeros(delta)
-    images_id_append = np.zeros(delta)
-    j = 0
-    for i in tqdm(range(delta)):
-        while True:
-            if random:
-                j = np.random.randint(0, n_images)
-            else:
-                j = (j+1)%n_images
-            if y[j] == np.int32(0):
-                break
-#           X_append[i, :] = X[j]
-        images_id_append[i] = images_id[j]
-    X = np.append(X, X_append, axis=0)
-    y = np.append(y, y_append)
-    images_id = np.append(images_id, images_id_append)
-
-    print "Feature matrix shape after equalization: {}".format(X.shape)
-    #map(lambda x: np.append(x, x[j]), [X, y, images_id])
-    return X, y, images_id
-
+def load_numpy_arrays(filename):
+    with open(filename, 'rb') as f:
+        f = np.load(f)
+    return f['arr_0'], f['arr_1'], f['arr_2']
 
 def regularization_objective(layers, lambda1=0., lambda2=0., *args, **kwargs):
     # default loss

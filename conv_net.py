@@ -23,13 +23,15 @@ from nolearn.lasagne import TrainSplit
 
 from utils import make_submission_file
 from utils import regularization_objective
+from utils import load_numpy_arrays
 
 
 
-X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
+X, y, images_id = load_numpy_arrays('train.pkl')
+#X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
 
-X = np.array(X).astype(np.float32)[:-1]
-y = np.array(y).astype(np.int32)[:-1]
+X = np.array(X).astype(np.float32)
+y = np.array(y).astype(np.int32)
 
 print "Train:"
 print "X.shape:", X.shape
@@ -93,7 +95,8 @@ nouri_net.fit(X, y)
 with open('nouri_net.pkl', 'wb') as f:
     cPickle.dump(nouri_net, f, -1)
 
-X_test, _, images_id = cPickle.load(open('test.pkl', 'rb'))
+X_test, _, images_id = load_numpy_arrays('test.pkl')
+#X_test, _, images_id = cPickle.load(open('test.pkl', 'rb'))
 
 print "Test:"
 print "X_test.shape:", X_test.shape
