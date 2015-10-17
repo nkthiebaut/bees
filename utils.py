@@ -38,15 +38,18 @@ def get_image(path, img_id):
         pixels = pixels[:, :, :3]
     return pixels.flatten()
 
+
 def make_submission_file(predictions ,images_id, output_filepath="submission_"+str(date.today())+".csv"):
     predictions_df = pd.DataFrame(predictions, index=images_id, columns=['genus'])
     predictions_df.index.names = ['id']
     predictions_df.to_csv(output_filepath)
 
+
 def load_numpy_arrays(filename):
-    with open(filename, 'rb') as f:
-        f = np.load(f)
-    return f['arr_0'], f['arr_1'], f['arr_2']
+    f = open(filename, 'rb')
+    data = np.load(f)
+    return data['arr_0'], data['arr_1'], data['arr_2']
+
 
 def regularization_objective(layers, lambda1=0., lambda2=0., *args, **kwargs):
     # default loss
