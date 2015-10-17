@@ -37,35 +37,32 @@ print "Train:"
 print "X.shape:", X.shape
 print "y.shape:", y.shape
 
-layers0 = [
-    # layer dealing with the input data
+layers4_mnist = [
     (InputLayer, {'shape': (None, X.shape[1], X.shape[2], X.shape[3])}),
 
-    # first stage of our convolutional layers
-#    (Conv2DLayer, {'num_filters': 96, 'filter_size': 5}),
-#    (Conv2DLayer, {'num_filters': 96, 'filter_size': 3}),
-#    (Conv2DLayer, {'num_filters': 96, 'filter_size': 3}),
-#    (Conv2DLayer, {'num_filters': 96, 'filter_size': 3}),
-#    (Conv2DLayer, {'num_filters': 96, 'filter_size': 3}),
-#    (MaxPool2DLayer, {'pool_size': 2}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    # second stage of our convolutional layers
-#    (Conv2DLayer, {'num_filters': 128, 'filter_size': 3}),
-#    (Conv2DLayer, {'num_filters': 128, 'filter_size': 3}),
-#    (Conv2DLayer, {'num_filters': 128, 'filter_size': 3}),
-#    (MaxPool2DLayer, {'pool_size': 2}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    # two dense layers with dropout
-    (DenseLayer, {'num_units': 500}),
-#    (DropoutLayer, {}),
-    (DenseLayer, {'num_units': 500}),
+    (DenseLayer, {'num_units': 64}),
+    (DropoutLayer, {}),
+    (DenseLayer, {'num_units': 64}),
 
-    # the output layer
     (DenseLayer, {'num_units': 1, 'nonlinearity': softmax}),
 ]
 
 nouri_net = NeuralNet(
-    layers0,
+    layers4_mnist,
 
     update=adam,
     update_learning_rate=0.0001,
