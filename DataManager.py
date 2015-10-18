@@ -68,7 +68,7 @@ class DataManager(object):
         """  Normalize all RGB channels separately, accross the training set """
         # self.ss = StandardScaler()
         print "{} is normalizing per RGB channel.".format(type(self).__name__)
-        rgb = self.X.reshape(self.n_images, self.width*self.width, 3).astype(np.float32)
+        rgb = self.X.reshape(self.n_images, self.width*self.width, self.n_channels).astype(np.float32)
 
         if self.test:
             with open('std_scaler.pkl', 'rb') as f:
@@ -103,7 +103,7 @@ class DataManager(object):
             filename = 'test.npz' if self.test else 'train.npz'
             #filename = 'test.pkl' if self.test else 'train.pkl'
         with open(filename, 'wb') as f:
-            np.savez(f, np.swapaxes(self.X.reshape(-1, self.width, self.width, 3), 1, 3), self.y, self.images_id)
+            np.savez(f, np.swapaxes(self.X.reshape(-1, self.width, self.width, self.n_channels), 1, 3), self.y, self.images_id)
             # cPickle.dump(self.get_in_lasagne_format(), f, protocol=-1)
 
     def get_in_lasagne_format(self):

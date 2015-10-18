@@ -28,9 +28,8 @@ from utils import load_numpy_arrays
 X, y, images_id = load_numpy_arrays('train.pkl')
 #X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
 
-# apply some very simple normalization to the data
-X -= X.mean()
-X /= X.std()
+X = X[:3200]
+y = y[:3200]
 
 print "Train:"
 print "X.shape:", X.shape
@@ -52,7 +51,7 @@ layers4_mnist = [
     (DropoutLayer, {}),
     (DenseLayer, {'num_units': 64}),
 
-    (DenseLayer, {'num_units': 1, 'nonlinearity': softmax}),
+    (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
 nouri_net = NeuralNet(
@@ -63,14 +62,14 @@ nouri_net = NeuralNet(
     #update_momentum=0.9,
 
     batch_iterator_train=BatchIterator(batch_size=32),
-    batch_iterator_test=BatchIterator(batch_size=31),
+    #batch_iterator_test=BatchIterator(batch_size=31),
 
     #objective=regularization_objective,
     #objective_lambda2=0.0025,
 
     #train_split=TrainSplit(eval_size=0.25, stratify=True),
-    #max_epochs=10,
-    #verbose=3,
+    max_epochs=10,
+    verbose=3,
     )
 """
 from nolearn.lasagne import PrintLayerInfo
