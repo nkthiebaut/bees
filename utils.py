@@ -10,7 +10,6 @@ import numpy as np
 from datetime import date
 import pandas as pd
 
-from tqdm import tqdm
 from PIL import Image
 from nolearn.lasagne import objective
 from lasagne.layers import get_all_params
@@ -24,7 +23,7 @@ def show_img(img_id, root='data/images', test=False):
     plt.imshow(im_np)
 
 
-def get_image(path, img_id):
+def get_image(path, img_id, n_channels=3):
     """
     Get pixels values from image id
     :param img_id: image id (int)
@@ -33,9 +32,9 @@ def get_image(path, img_id):
     filename = "{}.jpg".format(img_id)
     filepath = os.path.join(path, filename)
     pixels = np.array(Image.open(filepath), dtype=np.uint8)
-    if pixels.shape[2] == 4:
+    if pixels.shape[2] > n_channels:
         # raise Warning('Warning: Image ' + str(img_id) + ' is RGBA (alpha), converting to RGB.')
-        pixels = pixels[:, :, :3]
+        pixels = pixels[:, :, :n_channels]
     return pixels.flatten()
 
 
@@ -48,7 +47,7 @@ def make_submission_file(predictions ,images_id, output_filepath="submission_"+s
 def load_numpy_arrays(filename):
     f = open(filename, 'rb')
     data = np.load(f)
-    return data['arr_0'], data['arr_1'], data['arr_2']
+    return np.array(data['arr_0']).astype(np.float32), np.array(data['arr_1']).astype(np.int32), data['arr_2']
 
 
 def regularization_objective(layers, lambda1=0., lambda2=0., *args, **kwargs):

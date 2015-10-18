@@ -25,17 +25,13 @@ from utils import make_submission_file
 from utils import regularization_objective
 from utils import load_numpy_arrays
 
-
-
 X, y, images_id = load_numpy_arrays('train.pkl')
 #X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
-
-X = np.array(X).astype(np.float32)
-y = np.array(y).astype(np.int32)
 
 print "Train:"
 print "X.shape:", X.shape
 print "y.shape:", y.shape
+print "y value counts", np.unique(y, return_counts=True)
 
 layers4_mnist = [
     (InputLayer, {'shape': (None, X.shape[1], X.shape[2], X.shape[3])}),
@@ -68,14 +64,13 @@ nouri_net = NeuralNet(
     update_learning_rate=0.0001,
     #update_momentum=0.9,
 
-    #batch_iterator_train=BatchIterator(batch_size=64),
-    #batch_iterator_test=BatchIterator(batch_size=62),
+    batch_iterator_train=BatchIterator(batch_size=32),
+    batch_iterator_test=BatchIterator(batch_size=31),
 
-    objective=regularization_objective,
-    objective_lambda2=0.0025,
+    #objective=regularization_objective,
+    #objective_lambda2=0.0025,
 
-    train_split=TrainSplit(eval_size=0.25, stratify=False),
-    #regression=True,
+    train_split=TrainSplit(eval_size=0.25, stratify=True),
     max_epochs=10,
     verbose=3,
     )

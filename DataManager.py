@@ -21,13 +21,14 @@ from utils import get_image
 
 class DataManager(object):
     """ DataManager class that imports and pre-treat bees pictures """
-    def __init__(self, root='data/images', test=False):
+    def __init__(self, root='data/images', test=False, rgb=True, width=200):
 
         self.test = test
         directory = 'test' if test else 'train'
         labels_file = 'SubmissionFormat.csv' if test else 'train_labels.csv'
         self.path = os.path.join(root, directory)
-
+        self.n_channels = 3 if rgb else 1
+        self.width = width
         self.X = None
         self.y = pd.read_csv("data/"+labels_file, index_col=0)
         self.n_classes = self.y['genus'].value_counts()
@@ -67,7 +68,7 @@ class DataManager(object):
         """  Normalize all RGB channels separately, accross the training set """
         # self.ss = StandardScaler()
         print "{} is normalizing per RGB channel.".format(type(self).__name__)
-        rgb = self.X.reshape(self.n_images, 200*200, 3).astype(np.float32)
+        rgb = self.X.reshape(self.n_images, self.width*self.width, 3).astype(np.float32)
 
         if self.test:
             with open('std_scaler.pkl', 'rb') as f:
@@ -76,7 +77,7 @@ class DataManager(object):
             self.std_scaler = []
         # Normalize over each RGB channel separately
         normalized = []
-        for i in tqdm(range(3)):
+        for i in tqdm(range(self.n_channels)):
             if not self.test:
                 ss = StandardScaler().fit(rgb[:, :, i])
                 self.std_scaler.append(ss)
@@ -102,7 +103,7 @@ class DataManager(object):
             filename = 'test.npz' if self.test else 'train.npz'
             #filename = 'test.pkl' if self.test else 'train.pkl'
         with open(filename, 'wb') as f:
-            np.savez(f, np.swapaxes(self.X.reshape(-1, 200, 200, 3), 1, 3), self.y, self.images_id)
+            np.savez(f, np.swapaxes(self.X.reshape(-1, self.width, self.width, 3), 1, 3), self.y, self.images_id)
             # cPickle.dump(self.get_in_lasagne_format(), f, protocol=-1)
 
     def get_in_lasagne_format(self):
@@ -112,8 +113,8 @@ class DataManager(object):
         """ Get numpy matrix with shape compatible with lasagne
         :return: reshaped matrix
         """
-        # return self.X.reshape(self.n_images, 200, 200, 3)
-        return np.swapaxes(self.X.reshape(-1, 200, 200, 3), 1, 3)
+        # return self.X.reshape(self.n_images, self.width, self.width, 3)
+        return np.swapaxes(self.X.reshape(-1, self.width, self.width, self.n_channels), 1, 3)
 
     def show(self, img_id):
         """ Show image with id number img_id
@@ -122,7 +123,7 @@ class DataManager(object):
         loc = np.where(self.images_id == img_id)[0]
         if len(loc) != 1:
             raise IndexError('Image with id'+str(img_id)+'cannot be found.')
-        plt.imshow(self.X[loc].reshape(200, 200, 3))
+        plt.imshow(self.X[loc].reshape(self.width, self.width, self.n_channels))
 
     def equalize_classes(self, random=False):
         """ Copy underepresented class until equality is reached """
@@ -154,4 +155,4 @@ class DataManager(object):
 
     def __getitem__(self, index):
         """ Overload the [] operator """
-        return self.X[index].reshape(200, 200, 3)
+        return self.X[index].reshape(self.width, self.width, self.n_channels)
