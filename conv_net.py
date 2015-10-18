@@ -28,24 +28,22 @@ from utils import load_numpy_arrays
 X, y, images_id = load_numpy_arrays('train.pkl')
 #X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
 
+# apply some very simple normalization to the data
+X -= X.mean()
+X /= X.std()
+
 print "Train:"
 print "X.shape:", X.shape
 print "y.shape:", y.shape
-print "y value counts", np.unique(y, return_counts=True)
+print "y value counts: ", np.unique(y, return_counts=True)
 
 layers4_mnist = [
     (InputLayer, {'shape': (None, X.shape[1], X.shape[2], X.shape[3])}),
 
     (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
@@ -60,8 +58,8 @@ layers4_mnist = [
 nouri_net = NeuralNet(
     layers4_mnist,
 
-    update=adam,
-    update_learning_rate=0.0001,
+    #update=adam,
+    update_learning_rate=0.01,
     #update_momentum=0.9,
 
     batch_iterator_train=BatchIterator(batch_size=32),
@@ -70,9 +68,9 @@ nouri_net = NeuralNet(
     #objective=regularization_objective,
     #objective_lambda2=0.0025,
 
-    train_split=TrainSplit(eval_size=0.25, stratify=True),
-    max_epochs=10,
-    verbose=3,
+    #train_split=TrainSplit(eval_size=0.25, stratify=True),
+    #max_epochs=10,
+    #verbose=3,
     )
 """
 from nolearn.lasagne import PrintLayerInfo
