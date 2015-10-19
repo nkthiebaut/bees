@@ -84,7 +84,7 @@ nouri_net.fit(X, y)
 with open('nouri_net.pkl', 'wb') as f:
     cPickle.dump(nouri_net, f, -1)
 
-X_test, _, images_id = load_numpy_arrays('test.pkl')
+X_test, y, images_id = load_numpy_arrays('test.pkl')
 #X_test, _, images_id = cPickle.load(open('test.pkl', 'rb'))
 
 print "Test:"

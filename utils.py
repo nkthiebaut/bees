@@ -39,7 +39,10 @@ def get_image(path, img_id, n_channels=3):
 
 
 def make_submission_file(predictions ,images_id, output_filepath="submission_"+str(date.today())+".csv"):
-    predictions_df = pd.DataFrame(predictions, index=images_id, columns=['genus'])
+    pred = []
+    for p in predictions:
+        pred.append(p[0])
+    predictions_df = pd.DataFrame(pred, index=images_id, columns=['genus'])
     predictions_df.index.names = ['id']
     predictions_df.to_csv(output_filepath)
 
