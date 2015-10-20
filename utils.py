@@ -38,11 +38,8 @@ def get_image(path, img_id, n_channels=3):
     return pixels.flatten()
 
 
-def make_submission_file(predictions ,images_id, output_filepath="submission_"+str(date.today())+".csv"):
-    pred = []
-    for p in predictions:
-        pred.append(p[1])
-    predictions_df = pd.DataFrame(pred, index=images_id, columns=['genus'])
+def make_submission_file(predictions ,images_id, output_filepath="submission_"+str(date.today())+".csv")
+    predictions_df = pd.DataFrame(predictions[:,1], index=images_id, columns=['genus'])
     predictions_df.index.names = ['id']
     predictions_df.to_csv(output_filepath)
 
