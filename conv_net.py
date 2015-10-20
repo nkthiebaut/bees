@@ -25,11 +25,14 @@ from utils import make_submission_file
 from utils import regularization_objective
 from utils import load_numpy_arrays
 
+batch_size = 48
+
 X, y, images_id = load_numpy_arrays('train.pkl')
 #X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
 
-X = X[:3200]
-y = y[:3200]
+sample_size = y.shape[0] - y.shape[0] % batch_size
+X = X[:sample_size]
+y = y[:sample_size]
 
 print "Train:"
 print "X.shape:", X.shape
@@ -41,8 +44,14 @@ layers4_mnist = [
 
     (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
@@ -57,8 +66,8 @@ layers4_mnist = [
 nouri_net = NeuralNet(
     layers4_mnist,
 
-    #update=adam,
-    update_learning_rate=0.01,
+    update=adam,
+    update_learning_rate=0.0002,
     #update_momentum=0.9,
 
     batch_iterator_train=BatchIterator(batch_size=32),
