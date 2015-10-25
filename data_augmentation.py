@@ -1,16 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from nolearn.lasagne.base import BatchIterator
-from skimage.transform import rotate
-from skimage.transform import rescale
-import numpy as np
 
 __author__ = 'thiebaut'
 __date__ = '13/10/15'
 
+from nolearn.lasagne.base import BatchIterator
 import numpy as np
+from math import pi
+from skimage.transform import SimilarityTransform
+from skimage.transform import warp
+
 
 class DataAugmentationBatchIterator(BatchIterator):
+    def __init__(self, crop_size=128):
+        super( FileInfo, self ).__init__()
+        self.crop_size = crop_size
+
     def transform(self, Xb):
         Xb = super(FlipBatchIterator, self).transform(Xb)
 
@@ -20,19 +25,17 @@ class DataAugmentationBatchIterator(BatchIterator):
         Xb[indices] = Xb[indices, :, :, ::-1]
 
         Xb = np.swapaxes(Xb, 1, 3)
+        im_size = Xb.shape[1]
+        lower_cut = (im_size - self.crop_size)/2
+        upper_cut = (im_size + self.crop_size)/2
         for i in range(bs):
-            # Zoom and crop
-            scale_factor = 0.5 * np.random.random() + 1.
-            Xb[i] = rescale(Xb[i], scale_factor)
-            center = (1.*np.random.random()
+            # Apply similarity transform to zoom, rotate and translate
+            scaling_factor = 0.2 * np.random.random() + 0.9
+            angle = 2 * pi * np.random.random()
+            tf = SimilarityTransform(scale=scaling_factor, rotation=angle, translation=(im_size, im_size))
+            Xb = warp(Xb, tf)
 
-            # Translate
-
-            # Rotate
-            angle = np.random.random_integers(0, 359)
-            Xb[i] = rotate(Xb[i], angle, mode='nearest')
+            # Crop to desired size
+            Xb[i] = Xb[i,:,lower_cut:upper_cut, lower_cut:upper_cut]
         Xb = np.swapaxes(Xb, 1, 3)
-
-
-
         return Xb

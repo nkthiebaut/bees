@@ -5,9 +5,7 @@ __author__ = 'thiebaut'
 __date__ = '25/10/15'
 
 import numpy as np
-
-def float32(k):
-    return np.cast['float32'](k)
+from utils import float32
 
 class AdjustVariable(object):
     def __init__(self, name, start=0.03, stop=0.001):

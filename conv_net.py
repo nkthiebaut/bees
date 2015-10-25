@@ -24,14 +24,16 @@ from nolearn.lasagne import TrainSplit
 
 from utils import make_submission_file
 from utils import regularization_objective
-
 from utils import load_numpy_arrays
-from AdjustVariable import float32
+from utils import float32
+
 from AdjustVariable import AdjustVariable
+from data_augmentation import DataAugmentationBatchIterator
 sys.setrecursionlimit(10000)
 
 
 batch_size = 64
+crop_size = 150
 
 X, y, images_id = load_numpy_arrays('train.pkl')
 
@@ -44,7 +46,7 @@ print "X.shape:", X.shape
 print "y.shape:", y.shape
 print "y value counts: ", np.unique(y, return_counts=True)
 
-layer_simonyan = [
+layersE_simonyan = [
     (InputLayer, {'shape': (None, X.shape[1], X.shape[2], X.shape[3])}),
 
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
@@ -105,7 +107,7 @@ layers4_mnist = [
 ]
 
 nouri_net = NeuralNet(
-    layers4_mnist,
+    layersE_simonyan,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(0.03)),
@@ -115,14 +117,15 @@ nouri_net = NeuralNet(
         AdjustVariable('update_momentum', start=0.9, stop=0.999),
         ],
 
-    batch_iterator_train=BatchIterator(batch_size=batch_size),
+    #batch_iterator_train=BatchIterator(batch_size=batch_size),
+    batch_iterator_train=DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size),
     #batch_iterator_test=BatchIterator(batch_size=31),
 
     objective=regularization_objective,
     objective_lambda2=0.0005,
 
     #train_split=TrainSplit(eval_size=0.25, stratify=True),
-    max_epochs=5,
+    max_epochs=10,
     verbose=3,
     )
 
@@ -154,4 +157,4 @@ for v, c in zip(values,counts):
 make_submission_file(predictions, images_id)
 
 train_predictions = nouri_net.predict_proba(X)
-print "AUC ROC: ", roc_auc_score(y, train_predictions)
+print "AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])

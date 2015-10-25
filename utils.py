@@ -15,6 +15,10 @@ from nolearn.lasagne import objective
 from lasagne.layers import get_all_params
 
 
+def float32(k):
+    return np.cast['float32'](k)
+
+
 def show_img(img_id, root='data/images', test=False):
     dir = 'test' if test else 'train'
     path = os.path.join(root, dir, '{}.jpg'.format(img_id))
@@ -38,8 +42,8 @@ def get_image(path, img_id, n_channels=3):
     return pixels.flatten()
 
 
-def make_submission_file(predictions ,images_id, output_filepath="submission_"+str(date.today())+".csv")
-    predictions_df = pd.DataFrame(predictions[:,1], index=images_id, columns=['genus'])
+def make_submission_file(predictions, images_id, output_filepath="submission_" + str(date.today()) + ".csv"):
+    predictions_df = pd.DataFrame(predictions[:, 1], index=images_id, columns=['genus'])
     predictions_df.index.names = ['id']
     predictions_df.to_csv(output_filepath)
 
@@ -63,4 +67,3 @@ def regularization_objective(layers, lambda1=0., lambda2=0., *args, **kwargs):
     # add weights to regular loss
     losses += lambda1 * sum_abs_weights + lambda2 * sum_squared_weights
     return losses
-
