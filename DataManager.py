@@ -16,8 +16,8 @@ from tqdm import tqdm
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
 
-
 from utils import get_image
+
 
 class DataManager(object):
     """ DataManager class that imports and pre-treat bees pictures """
@@ -143,7 +143,8 @@ class DataManager(object):
                     j = (j+1)%self.n_images
                 if self.y[j] == np.int32(0):
                     break
-#           X_append[i, :] = self.X[j]
+            X_append[i, :] = self.X[j]
+            y_append[i] = self.y[j]
             images_id_append[i] = self.images_id[j]
         self.X = np.append(self.X, X_append, axis=0)
         self.y = np.append(self.y, y_append)

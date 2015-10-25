@@ -27,6 +27,12 @@ def show_img(img_id, root='data/images', test=False):
     plt.imshow(im_np)
 
 
+def print_predictions(predictions):
+    values, counts = np.unique(predictions, return_counts=True)
+    for v, c in zip(values, counts):
+        print 'Number of {}: {}'.format(v, c)
+
+
 def get_image(path, img_id, n_channels=3):
     """
     Get pixels values from image id

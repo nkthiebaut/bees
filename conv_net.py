@@ -16,16 +16,19 @@ from lasagne.layers import DropoutLayer
 from lasagne.layers import Conv2DLayer
 from lasagne.layers import MaxPool2DLayer
 from lasagne.nonlinearities import softmax
+from lasagne.nonlinearities import leaky_rectify
 from lasagne.updates import nesterov_momentum, sgd, adam
 
 from nolearn.lasagne import NeuralNet
 from nolearn.lasagne import BatchIterator
 from nolearn.lasagne import TrainSplit
+from nolearn.lasagne import PrintLayerInfo
 
 from utils import make_submission_file
 from utils import regularization_objective
 from utils import load_numpy_arrays
 from utils import float32
+from utils import print_predictions
 
 from adaptative_learning import AdjustVariable
 from adaptative_learning import EarlyStopping
@@ -47,31 +50,23 @@ print "X.shape:", X.shape
 print "y.shape:", y.shape
 print "y value counts: ", np.unique(y, return_counts=True)
 
-layersE_simonyan = [
+layersA_simonyan = [
     (InputLayer, {'shape': (None, X.shape[1], X.shape[2], X.shape[3])}),
 
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
     (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1}),
-    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1}),
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
@@ -82,6 +77,35 @@ layersE_simonyan = [
 
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
+
+layersA_simonyan_leaky = [
+    (InputLayer, {'shape': (None, X.shape[1], X.shape[2], X.shape[3])}),
+
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':leaky_rectify}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':leaky_rectify}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':leaky_rectify}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':leaky_rectify}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':leaky_rectify}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':leaky_rectify}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':leaky_rectify}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':leaky_rectify}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (DenseLayer, {'num_units': 4096}, 'nonlinearity':leaky_rectify),
+    (DropoutLayer, {}),
+    (DenseLayer, {'num_units': 4096}, 'nonlinearity':leaky_rectify),
+
+    (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+]
+
 
 layers4_mnist = [
     (InputLayer, {'shape': (None, X.shape[1], X.shape[2], X.shape[3])}),
@@ -107,8 +131,8 @@ layers4_mnist = [
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
-nouri_net = NeuralNet(
-    layersE_simonyan,
+conv_net = NeuralNet(
+    layersA_simonyan,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(0.03)),
@@ -131,32 +155,20 @@ nouri_net = NeuralNet(
     verbose=3,
     )
 
-"""
-from nolearn.lasagne import PrintLayerInfo
-nouri_net.verbose = 3
-nouri_net.initialize()
-layer_info = PrintLayerInfo()
-layer_info(nouri_net)
-#exit(0)
-"""
+conv_net.fit(X, y)
 
-nouri_net.fit(X, y)
-
-with open('nouri_net.pkl', 'wb') as f:
-    cPickle.dump(nouri_net, f, -1)
+with open('conv_net.pkl', 'wb') as f:
+    cPickle.dump(conv_net, f, -1)
 
 X_test, y, images_id = load_numpy_arrays('test.pkl')
 
 print "Test:"
 print "X_test.shape:", X_test.shape
 print "y.shape:", y.shape
-predictions = nouri_net.predict_proba(X_test)
-
-values, counts = np.unique(predictions, return_counts=True)
-for v, c in zip(values,counts):
-    print 'Number of {}: {}'.format(v,c)
-
+predictions = conv_net.predict_proba(X_test)
 make_submission_file(predictions, images_id)
 
-train_predictions = nouri_net.predict_proba(X)
-print "AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
+# print_predictions(predictions)
+
+# train_predictions = conv_net.predict_proba(X)
+# print "AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
