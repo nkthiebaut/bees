@@ -13,8 +13,8 @@ from skimage.transform import resize
 
 
 class DataAugmentationBatchIterator(BatchIterator):
-    def __init__(self, crop_size=150):
-        super(DataAugmentationBatchIterator, self).__init__()
+    def __init__(self, batch_size, crop_size=150):
+        super(DataAugmentationBatchIterator, self).__init__(batch_size)
         self.crop_size = crop_size
 
     def transform(self, Xb, yb):
