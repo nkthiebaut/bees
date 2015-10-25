@@ -12,12 +12,12 @@ from skimage.transform import warp
 
 
 class DataAugmentationBatchIterator(BatchIterator):
-    def __init__(self, crop_size=128):
+    def __init__(self, crop_size=150):
         super(DataAugmentationBatchIterator, self).__init__()
         self.crop_size = crop_size
 
-    def transform(self, Xb):
-        Xb = super(DataAugmentationBatchIterator, self).transform(Xb)
+    def transform(self, Xb, yb):
+        Xb, yb = super(DataAugmentationBatchIterator, self).transform(Xb, yb)
 
         # Flip half of the images in this batch at random:
         bs = Xb.shape[0]
@@ -43,4 +43,16 @@ class DataAugmentationBatchIterator(BatchIterator):
             # Crop to desired size
             Xb[i] = Xb[i, :, lower_cut:upper_cut, lower_cut:upper_cut]
         Xb = np.swapaxes(Xb, 1, 3)
-        return Xb
+        return Xb, yb
+
+class FlipBatchIterator(BatchIterator):
+
+    def transform(self, Xb, yb):
+        Xb, yb = super(FlipBatchIterator, self).transform(Xb, yb)
+
+        # Flip half of the images in this batch at random:
+        bs = Xb.shape[0]
+        indices = np.random.choice(bs, bs / 2, replace=False)
+        Xb[indices] = Xb[indices, :, :, ::-1]
+
+        return Xb, yb

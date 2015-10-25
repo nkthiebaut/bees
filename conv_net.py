@@ -33,11 +33,12 @@ from utils import print_predictions
 from adaptative_learning import AdjustVariable
 from adaptative_learning import EarlyStopping
 from data_augmentation import DataAugmentationBatchIterator
+from data_augmentation import FlipBatchIterator
 sys.setrecursionlimit(10000)
 
 
-batch_size = 64
-crop_size = 150
+batch_size = 48
+crop_size = 200
 
 X, y, images_id = load_numpy_arrays('train.pkl')
 
@@ -51,7 +52,7 @@ print "y.shape:", y.shape
 print "y value counts: ", np.unique(y, return_counts=True)
 
 layersA_simonyan = [
-    (InputLayer, {'shape': (None, X.shape[1], X.shape[2], X.shape[3])}),
+    (InputLayer, {'shape': (None, X.shape[1], crop_size, crop_size)}),
 
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
