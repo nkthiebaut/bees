@@ -27,7 +27,8 @@ from utils import regularization_objective
 from utils import load_numpy_arrays
 from utils import float32
 
-from AdjustVariable import AdjustVariable
+from adaptative_learning import AdjustVariable
+from adaptative_learning import EarlyStopping
 from data_augmentation import DataAugmentationBatchIterator
 sys.setrecursionlimit(10000)
 
@@ -115,6 +116,7 @@ nouri_net = NeuralNet(
     on_epoch_finished=[
         AdjustVariable('update_learning_rate', start=0.03, stop=0.0001),
         AdjustVariable('update_momentum', start=0.9, stop=0.999),
+        EarlyStopping(patience=10),
         ],
 
     #batch_iterator_train=BatchIterator(batch_size=batch_size),
