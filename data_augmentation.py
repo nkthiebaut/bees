@@ -9,6 +9,7 @@ import numpy as np
 from math import pi
 from skimage.transform import SimilarityTransform
 from skimage.transform import warp
+from skimage.transform import resize
 
 
 class DataAugmentationBatchIterator(BatchIterator):
@@ -28,7 +29,8 @@ class DataAugmentationBatchIterator(BatchIterator):
         im_size = Xb.shape[1]
         lower_cut = (im_size - self.crop_size)/2
         upper_cut = (im_size + self.crop_size)/2
-        shift_x, shift_y = np.array(im_size)/2
+        shift_x = im_size/2
+        shift_y = shift_x
         tf_shift = SimilarityTransform(translation=[-shift_x, -shift_y])
         tf_shift_inv = SimilarityTransform(translation=[shift_x, shift_y])
         for i in range(bs):
@@ -38,10 +40,11 @@ class DataAugmentationBatchIterator(BatchIterator):
             trans_x = np.random.randint(-5, 5)
             trans_y = np.random.randint(-5, 5)
             tf = SimilarityTransform(scale=scaling_factor, rotation=angle, translation=(trans_x, trans_y))
-            Xb[i] = warp(Xb, (tf_shift + (tf + tf_shift_inv)).inverse)
+            Xb[i] = warp(Xb[i], (tf_shift + (tf + tf_shift_inv)).inverse)
 
             # Crop to desired size
-            Xb[i] = Xb[i, :, lower_cut:upper_cut, lower_cut:upper_cut]
+            tmp = Xb[i, lower_cut:upper_cut, lower_cut:upper_cut, :]
+            Xb[i] = resize(tmp, (200,200))
         Xb = np.swapaxes(Xb, 1, 3)
         return Xb, yb
 
