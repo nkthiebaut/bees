@@ -6,9 +6,10 @@ __date__ = '02/10/15'
 
 import cPickle
 import sys
-sys.setrecursionlimit(10000)
 import numpy as np
+import theano
 
+from sklearn.metrics import roc_auc_score
 from lasagne.layers import DenseLayer
 from lasagne.layers import InputLayer
 from lasagne.layers import DropoutLayer
@@ -27,13 +28,12 @@ from utils import regularization_objective
 from utils import load_numpy_arrays
 from AdjustVariable import float32
 from AdjustVariable import AdjustVariable
+sys.setrecursionlimit(10000)
 
-import theano
 
-batch_size = 48
+batch_size = 64
 
 X, y, images_id = load_numpy_arrays('train.pkl')
-#X, y, images_id = cPickle.load(open('train.pkl', 'rb'))
 
 sample_size = y.shape[0] - y.shape[0] % batch_size
 X = X[:sample_size]
@@ -110,17 +110,22 @@ nouri_net = NeuralNet(
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(0.03)),
     update_momentum=theano.shared(float32(0.9)),
+    on_epoch_finished=[
+        AdjustVariable('update_learning_rate', start=0.03, stop=0.0001),
+        AdjustVariable('update_momentum', start=0.9, stop=0.999),
+        ],
 
-    batch_iterator_train=BatchIterator(batch_size=32),
+    batch_iterator_train=BatchIterator(batch_size=batch_size),
     #batch_iterator_test=BatchIterator(batch_size=31),
 
     objective=regularization_objective,
     objective_lambda2=0.0005,
 
     #train_split=TrainSplit(eval_size=0.25, stratify=True),
-    max_epochs=10,
+    max_epochs=5,
     verbose=3,
     )
+
 """
 from nolearn.lasagne import PrintLayerInfo
 nouri_net.verbose = 3
@@ -129,13 +134,13 @@ layer_info = PrintLayerInfo()
 layer_info(nouri_net)
 #exit(0)
 """
+
 nouri_net.fit(X, y)
 
 with open('nouri_net.pkl', 'wb') as f:
     cPickle.dump(nouri_net, f, -1)
 
 X_test, y, images_id = load_numpy_arrays('test.pkl')
-#X_test, _, images_id = cPickle.load(open('test.pkl', 'rb'))
 
 print "Test:"
 print "X_test.shape:", X_test.shape
@@ -147,3 +152,6 @@ for v, c in zip(values,counts):
     print 'Number of {}: {}'.format(v,c)
 
 make_submission_file(predictions, images_id)
+
+train_predictions = nouri_net.predict_proba(X)
+print "AUC ROC: ", roc_auc_score(y, train_predictions)
