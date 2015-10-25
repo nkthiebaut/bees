@@ -99,9 +99,9 @@ layersA_simonyan_leaky = [
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':leaky_rectify}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (DenseLayer, {'num_units': 4096}, 'nonlinearity':leaky_rectify),
+    (DenseLayer, {'num_units': 4096, 'nonlinearity':leaky_rectify}),
     (DropoutLayer, {}),
-    (DenseLayer, {'num_units': 4096}, 'nonlinearity':leaky_rectify),
+    (DenseLayer, {'num_units': 4096, 'nonlinearity':leaky_rectify}),
 
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
