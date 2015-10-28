@@ -37,7 +37,7 @@ from data_augmentation import FlipBatchIterator
 sys.setrecursionlimit(10000)
 
 
-batch_size = 48
+batch_size = 56
 crop_size = 150
 
 X, y, images_id = load_numpy_arrays('train.pkl')
@@ -141,18 +141,18 @@ conv_net = NeuralNet(
     on_epoch_finished=[
         AdjustVariable('update_learning_rate', start=0.01, stop=0.0001),
         AdjustVariable('update_momentum', start=0.9, stop=0.999),
-        EarlyStopping(patience=10),
+        EarlyStopping(patience=5),
         ],
 
     #batch_iterator_train=BatchIterator(batch_size=batch_size),
     batch_iterator_train=DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size),
-    #batch_iterator_test=BatchIterator(batch_size=31),
+    batch_iterator_test=DataAugmentationBatchIterator(batch_size=31),
 
     objective=regularization_objective,
     objective_lambda2=0.0005,
 
     #train_split=TrainSplit(eval_size=0.25, stratify=True),
-    max_epochs=200,
+    max_epochs=100,
     verbose=3,
     )
 
@@ -172,4 +172,7 @@ make_submission_file(predictions, images_id)
 # print_predictions(predictions)
 
 train_predictions = conv_net.predict_proba(X)
-print "AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
+with open('conv_net.pkl', 'wb') as f:
+    cPickle.dump(conv_net, f, -1)
+
+print "Train set AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
