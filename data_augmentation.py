@@ -25,6 +25,7 @@ class DataAugmentationBatchIterator(BatchIterator):
         indices = np.random.choice(bs, bs / 2, replace=False)
         Xb[indices] = Xb[indices, :, :, ::-1]
 
+        Xb /= np.float32(255.)
         Xb = np.swapaxes(Xb, 1, 3)
         im_size = Xb.shape[1]
         lower_cut = (im_size - self.crop_size)/2
@@ -36,16 +37,18 @@ class DataAugmentationBatchIterator(BatchIterator):
         for i in range(bs):
             # Apply similarity transform to zoom, rotate and translate
             scaling_factor = 0.2 * np.random.random() + 0.9
-            angle = pi * (np.random.random()-1.)/8
+            angle = pi * (np.random.random()-0.5)/8
             trans_x = np.random.randint(-5, 5)
             trans_y = np.random.randint(-5, 5)
+
             tf = SimilarityTransform(scale=scaling_factor, rotation=angle, translation=(trans_x, trans_y))
             Xb[i] = warp(Xb[i], (tf_shift + (tf + tf_shift_inv)).inverse)
 
             # Crop to desired size
             tmp = Xb[i, lower_cut:upper_cut, lower_cut:upper_cut, :]
-            Xb[i] = resize(tmp, (200,200))
+            # Xb[i] = resize(tmp, (200,200))
         Xb = np.swapaxes(Xb, 1, 3)
+        Xb *= np.float32(255.)
         return Xb, yb
 
 class FlipBatchIterator(BatchIterator):

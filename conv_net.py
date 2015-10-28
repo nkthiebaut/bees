@@ -38,7 +38,7 @@ sys.setrecursionlimit(10000)
 
 
 batch_size = 48
-crop_size = 200
+crop_size = 150
 
 X, y, images_id = load_numpy_arrays('train.pkl')
 
@@ -136,10 +136,10 @@ conv_net = NeuralNet(
     layersA_simonyan,
 
     update=nesterov_momentum,
-    update_learning_rate=theano.shared(float32(0.03)),
+    update_learning_rate=theano.shared(float32(0.01)),
     update_momentum=theano.shared(float32(0.9)),
     on_epoch_finished=[
-        AdjustVariable('update_learning_rate', start=0.03, stop=0.0001),
+        AdjustVariable('update_learning_rate', start=0.01, stop=0.0001),
         AdjustVariable('update_momentum', start=0.9, stop=0.999),
         EarlyStopping(patience=10),
         ],
@@ -152,7 +152,7 @@ conv_net = NeuralNet(
     objective_lambda2=0.0005,
 
     #train_split=TrainSplit(eval_size=0.25, stratify=True),
-    max_epochs=10,
+    max_epochs=200,
     verbose=3,
     )
 
@@ -161,7 +161,7 @@ conv_net.fit(X, y)
 with open('conv_net.pkl', 'wb') as f:
     cPickle.dump(conv_net, f, -1)
 
-X_test, y, images_id = load_numpy_arrays('test.pkl')
+X_test, _, images_id = load_numpy_arrays('test.pkl')
 
 print "Test:"
 print "X_test.shape:", X_test.shape
@@ -171,5 +171,5 @@ make_submission_file(predictions, images_id)
 
 # print_predictions(predictions)
 
-# train_predictions = conv_net.predict_proba(X)
-# print "AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
+train_predictions = conv_net.predict_proba(X)
+print "AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
