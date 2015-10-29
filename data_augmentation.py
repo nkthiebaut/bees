@@ -13,7 +13,7 @@ from skimage.transform import resize
 
 
 class DataAugmentationBatchIterator(BatchIterator):
-    def __init__(self, batch_size, crop_size=150):
+    def __init__(self, batch_size, crop_size=200):
         super(DataAugmentationBatchIterator, self).__init__(batch_size)
         self.crop_size = crop_size
 
@@ -36,16 +36,16 @@ class DataAugmentationBatchIterator(BatchIterator):
         tf_shift_inv = SimilarityTransform(translation=[shift_x, shift_y])
         for i in range(bs):
             # Apply similarity transform to zoom, rotate and translate
-            scaling_factor = 0.2 * np.random.random() + 0.9
-            angle = pi * (np.random.random()-0.5)/8
-            trans_x = np.random.randint(-5, 5)
-            trans_y = np.random.randint(-5, 5)
+            scaling_factor = 0.1 * np.random.random() + 1.
+            angle = pi/2 * np.random.randint(0,3) # pi * (np.random.random()-0.5)
+            trans_x = 0 # np.random.randint(-5, 5)
+            trans_y = 0 # np.random.randint(-5, 5)
 
             tf = SimilarityTransform(scale=scaling_factor, rotation=angle, translation=(trans_x, trans_y))
             Xb[i] = warp(Xb[i], (tf_shift + (tf + tf_shift_inv)).inverse)
 
             # Crop to desired size
-            tmp = Xb[i, lower_cut:upper_cut, lower_cut:upper_cut, :]
+            Xb[i] = Xb[i, lower_cut:upper_cut, lower_cut:upper_cut, :]
             # Xb[i] = resize(tmp, (200,200))
         Xb = np.swapaxes(Xb, 1, 3)
         Xb *= np.float32(255.)

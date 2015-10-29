@@ -13,7 +13,10 @@ import pandas as pd
 from PIL import Image
 from nolearn.lasagne import objective
 from lasagne.layers import get_all_params
-
+from skimage.transform import AffineTransform
+from skimage.transform import warp
+from skimage.util import pad
+from math import pi
 
 def float32(k):
     return np.cast['float32'](k)
@@ -88,3 +91,38 @@ def plot_loss(net, filename="submissions/loss_"+str(date.today())+".png", show=F
     plt.savefig(filename)
     if show:
         plt.show()
+
+def data_augmentation_test(img_id=1, crop_size=200):
+    #show_img(img_id)
+    Xb = np.array(Image.open('data/images/train/'+str(img_id)+'.jpg'), dtype=np.uint8)/np.float32(255.)
+    print Xb.shape
+    padded = np.zeros((3,400,400))
+    print padded.shape
+    for i in range(3):
+        padded[i] = pad(np.swapaxes(Xb,0,2)[i], (100,100) , 'reflect')
+    print padded.shape
+    padded = np.swapaxes(padded,0,2)
+    plt.imshow(padded)
+    """
+    im_size = Xb.shape[0]
+    lower_cut = (im_size - crop_size)/2
+    upper_cut = (im_size + crop_size)/2
+    im_size = padded.shape[0]
+    shift_x = im_size/2
+    shift_y = shift_x
+    tf_shift = AffineTransform(translation=[-shift_x, -shift_y])
+    tf_shift_inv = AffineTransform(translation=[shift_x, shift_y])
+    # Apply similarity transform to zoom, rotate and translate
+    scaling_factor = 0.2 * np.random.random() + 0.5
+    angle = pi * (np.random.random()-0.5)#/8
+    trans_x = np.random.randint(-5, 5)
+    trans_y = np.random.randint(-5, 5)
+
+    tf = AffineTransform(scale=(scaling_factor,scaling_factor), rotation=angle, shear=0,
+                         translation=(trans_x, trans_y))
+    padded = warp(padded, (tf_shift + (tf + tf_shift_inv)).inverse)
+
+    # Crop to desired size
+    tmp = padded[lower_cut:upper_cut, lower_cut:upper_cut, :]
+    print tmp.shape
+    plt.imshow(tmp)"""
