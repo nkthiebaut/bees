@@ -13,7 +13,6 @@ from datetime import date
 from sklearn.metrics import roc_auc_score
 
 from lasagne.updates import nesterov_momentum, sgd, adam
-from lasagne.nonlinearities import LeakyRectify
 
 from nolearn.lasagne import NeuralNet
 from nolearn.lasagne import BatchIterator
@@ -26,23 +25,30 @@ from utils import load_numpy_arrays
 from utils import float32
 from utils import plot_loss
 
+from lasagne.layers import DenseLayer
+from lasagne.layers import InputLayer
+from lasagne.layers import DropoutLayer
+from lasagne.layers import Conv2DLayer
+from lasagne.layers import MaxPool2DLayer
+from lasagne.nonlinearities import softmax
+from lasagne.nonlinearities import LeakyRectify
+
 from adaptative_learning import AdjustVariable
 from adaptative_learning import EarlyStopping
 from data_augmentation import DataAugmentationBatchIterator
 from data_augmentation import FlipBatchIterator
 
-from layers import *
 sys.setrecursionlimit(10000)
 
 # ----- Parameters -----
 batch_size = 56
 nb_channels = 3
-crop_size = 150
-activation_function = LeakyRectify(0.1)
+crop_size = 200
 init_learning_rate = 0.005
+activation_function = LeakyRectify(0.1)
 # ----------------------
 
-X, y, images_id = load_numpy_arrays('train.pkl')
+X, y, images_id = load_numpy_arrays('train.npz')
 sample_size = y.shape[0] - y.shape[0] % batch_size
 X = X[:sample_size]
 y = y[:sample_size]
@@ -52,8 +58,106 @@ print "X.shape:", X.shape
 print "y.shape:", y.shape
 print "y value counts: ", np.unique(y, return_counts=True)
 
+layers_test = [
+    (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+    (DenseLayer, {'num_units': 64}),
+
+    (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+]
+
+layers_mnist = [
+    (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (DenseLayer, {'num_units': 64}),
+    (DropoutLayer, {}),
+    (DenseLayer, {'num_units': 64}),
+
+    (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+]
+
+layers_simonyan = [
+    (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
+    (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+
+    (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+]
+
+layers_team_oO = [
+    (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+    (Conv2DLayer, {'num_filters': 16, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 16, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (DropoutLayer, {}),
+    (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+    (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+
+    (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+]
+
 conv_net = NeuralNet(
-    layers_team_oO,
+    layers_simonyan,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(init_learning_rate)),
@@ -76,6 +180,7 @@ conv_net = NeuralNet(
     verbose=3,
     )
 
+
 conv_net.fit(X, y)
 
 with open('conv_net'+str(date.today)+'.pkl', 'wb') as f:
@@ -88,8 +193,9 @@ plot_loss(conv_net,"submissions/loss_"+str(date.today())+".png", show=False)
 print "Train set AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
 
 # ----- Test set ----
-X_test, _, images_id_test = load_numpy_arrays('test.pkl')
+X_test, _, images_id_test = load_numpy_arrays('test.npz')
 print "Test:"
 print "X_test.shape:", X_test.shape
 predictions = conv_net.predict_proba(X_test)
 make_submission_file(predictions, images_id_test, output_filepath='submissions/submission_'+str(date.today)+'.csv')
+
