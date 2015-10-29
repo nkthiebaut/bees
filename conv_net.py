@@ -46,6 +46,8 @@ nb_channels = 3
 crop_size = 200
 init_learning_rate = 0.005
 activation_function = LeakyRectify(0.1)
+lambda2=0.0005
+max_epochs=50
 # ----------------------
 
 X, y, images_id = load_numpy_arrays('train.npz')
@@ -157,7 +159,7 @@ layers_team_oO = [
 ]
 
 conv_net = NeuralNet(
-    layers_simonyan,
+    layers_team_oO,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(init_learning_rate)),
@@ -173,10 +175,10 @@ conv_net = NeuralNet(
     batch_iterator_test=DataAugmentationBatchIterator(batch_size=31, crop_size=crop_size),
 
     objective=regularization_objective,
-    objective_lambda2=0.0005,
+    objective_lambda2=lambda2,
 
     #train_split=TrainSplit(eval_size=0.25, stratify=True),
-    max_epochs=50,
+    max_epochs=max_epochs,
     verbose=3,
     )
 
