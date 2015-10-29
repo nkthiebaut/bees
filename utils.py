@@ -74,7 +74,7 @@ def regularization_objective(layers, lambda1=0., lambda2=0., *args, **kwargs):
     losses += lambda1 * sum_abs_weights + lambda2 * sum_squared_weights
     return losses
 
-def plot_loss(net):
+def plot_loss(net, filename="submissions/loss_"+str(date.today())+".png", show=False):
     train_loss = np.array([i["train_loss"] for i in net.train_history_])
     valid_loss = np.array([i["valid_loss"] for i in net.train_history_])
     plt.plot(train_loss, linewidth=3, label="train")
@@ -85,5 +85,6 @@ def plot_loss(net):
     plt.ylabel("loss")
     plt.ylim(1e-3, 1e-2)
     plt.yscale("log")
-    plt.savefig('loss.png')
-    plt.show()
+    plt.savefig(filename)
+    if show;
+        plt.show()
