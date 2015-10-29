@@ -46,7 +46,7 @@ nb_channels = 3
 crop_size = 200
 init_learning_rate = 0.005
 activation_function = LeakyRectify(0.1)
-lambda2=0.0005
+lambda2=0.0003
 max_epochs=50
 # ----------------------
 
@@ -147,19 +147,16 @@ layers_team_oO = [
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
     (DropoutLayer, {}),
     (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
     (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
 
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
 conv_net = NeuralNet(
-    layers_team_oO,
+    layers_simonyan,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(init_learning_rate)),
@@ -185,12 +182,12 @@ conv_net = NeuralNet(
 
 conv_net.fit(X, y)
 
-with open('conv_net'+str(date.today)+'.pkl', 'wb') as f:
+with open('conv_net'+str(date.today())+'.pkl', 'wb') as f:
     cPickle.dump(conv_net, f, -1)
 
 # ----- Train set ----
 train_predictions = conv_net.predict_proba(X)
-make_submission_file(train_predictions, images_id, output_filepath='submissions/training_'+str(date.today)+'.csv')
+make_submission_file(train_predictions[:sample_size], images_id[:sample_size], output_filepath='submissions/training_'+str(date.today())+'.csv')
 plot_loss(conv_net,"submissions/loss_"+str(date.today())+".png", show=False)
 print "Train set AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
 
