@@ -194,7 +194,9 @@ layers_krizhevsky = [
     (Conv2DLayer, {'num_filters': 256, 'filter_size': (5, 5), 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (3, 3), 'stride': 2}),
 
-    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 384, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 384, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (3, 3), 'stride': 2}),
 
     (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
