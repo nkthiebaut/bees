@@ -1,11 +1,6 @@
 
-+ Data Augmentation :
-    + Zoom
-    + Rotate
-    + Translate
-    + Horizontal flip
-    + (Shear?)
-+ Early stopping/adaptative learning rate
++ objective function : AUC ROC
++ Data Augmentation
 + Network :  
     + Try drop-out at every level
     + Leaky rectifiers

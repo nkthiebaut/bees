@@ -86,7 +86,7 @@ def plot_loss(net, filename="submissions/loss_"+str(date.today())+".png", show=F
     plt.legend()
     plt.xlabel("epoch")
     plt.ylabel("loss")
-    plt.ylim(1e-3, 1e-2)
+    #plt.ylim(1e-3, 1e-2)
     plt.yscale("log")
     plt.savefig(filename)
     if show:

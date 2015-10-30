@@ -44,10 +44,11 @@ sys.setrecursionlimit(10000)
 batch_size = 56
 nb_channels = 3
 crop_size = 200
-init_learning_rate = 0.005
+init_learning_rate = 0.01
 activation_function = LeakyRectify(0.1)
-lambda2=0.0003
+lambda2=0.0005
 max_epochs=50
+exp_name=sys.argv[1]
 # ----------------------
 
 X, y, images_id = load_numpy_arrays('train.npz')
@@ -92,6 +93,35 @@ layers_mnist = [
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
+layers_A = [
+    (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+    (Conv2DLayer, {'num_filters': 16, 'filter_size': (5, 5), 'pad': 1, 'stride': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 16, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (DenseLayer, {'num_units': 512, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
+    (DenseLayer, {'num_units': 512, 'nonlinearity':activation_function}),
+
+    (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+]
 layers_simonyan = [
     (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
@@ -155,8 +185,29 @@ layers_team_oO = [
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
+layers_krizhevsky = [
+    (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+    (Conv2DLayer, {'num_filters': 96, 'filter_size': (11, 11), 'stride': 4, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (3, 3), 'stride': 2}),
+
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (5, 5), 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (3, 3), 'stride': 2}),
+
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (3, 3), 'stride': 2}),
+
+    (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
+    (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
+
+    (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+]
+
+
 conv_net = NeuralNet(
-    layers_simonyan,
+    layers_krizhevsky,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(init_learning_rate)),
@@ -167,9 +218,9 @@ conv_net = NeuralNet(
         EarlyStopping(patience=5),
         ],
 
-    #batch_iterator_train=BatchIterator(batch_size=batch_size),
-    batch_iterator_train=DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size),
-    batch_iterator_test=DataAugmentationBatchIterator(batch_size=31, crop_size=crop_size),
+    batch_iterator_train=FlipBatchIterator(batch_size=batch_size),
+    #batch_iterator_train=DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size),
+    #batch_iterator_test=DataAugmentationBatchIterator(batch_size=31, crop_size=crop_size),
 
     objective=regularization_objective,
     objective_lambda2=lambda2,
@@ -182,13 +233,14 @@ conv_net = NeuralNet(
 
 conv_net.fit(X, y)
 
-with open('conv_net'+str(date.today())+'.pkl', 'wb') as f:
+name = exp_name + '_'+ str(date.today())
+with open('models/conv_net_'+name+'.pkl', 'wb') as f:
     cPickle.dump(conv_net, f, -1)
 
 # ----- Train set ----
 train_predictions = conv_net.predict_proba(X)
-make_submission_file(train_predictions[:sample_size], images_id[:sample_size], output_filepath='submissions/training_'+str(date.today())+'.csv')
-plot_loss(conv_net,"submissions/loss_"+str(date.today())+".png", show=False)
+make_submission_file(train_predictions[:sample_size], images_id[:sample_size], output_filepath='submissions/training_'+name+'.csv')
+plot_loss(conv_net,"submissions/loss_"+name+".png", show=False)
 print "Train set AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
 
 # ----- Test set ----
@@ -196,5 +248,5 @@ X_test, _, images_id_test = load_numpy_arrays('test.npz')
 print "Test:"
 print "X_test.shape:", X_test.shape
 predictions = conv_net.predict_proba(X_test)
-make_submission_file(predictions, images_id_test, output_filepath='submissions/submission_'+str(date.today)+'.csv')
+make_submission_file(predictions, images_id_test, output_filepath='submissions/submission_'+str(date.today())+'.csv')
 
