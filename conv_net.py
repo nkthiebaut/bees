@@ -41,7 +41,7 @@ from data_augmentation import FlipBatchIterator
 sys.setrecursionlimit(10000)
 
 # ----- Parameters -----
-batch_size = 56
+batch_size = 64
 nb_channels = 3
 crop_size = 200
 init_learning_rate = 0.01
@@ -96,19 +96,15 @@ layers_mnist = [
 layers_A = [
     (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
-    (Conv2DLayer, {'num_filters': 16, 'filter_size': (5, 5), 'pad': 1, 'stride': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 16, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (9, 9), 'pad': 1, 'nonlinearity':activation_function}),
     (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (7, 7), 'pad': 1, 'nonlinearity':activation_function}),
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (5, 5), 'pad': 1, 'nonlinearity':activation_function}),
     (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
@@ -116,9 +112,14 @@ layers_A = [
     (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (DenseLayer, {'num_units': 512, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
     (DropoutLayer, {}),
-    (DenseLayer, {'num_units': 512, 'nonlinearity':activation_function}),
+    (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
 
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
@@ -209,7 +210,7 @@ layers_krizhevsky = [
 
 
 conv_net = NeuralNet(
-    layers_krizhevsky,
+    layers_A,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(init_learning_rate)),

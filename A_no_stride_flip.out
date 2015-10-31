@@ -1,0 +1,96 @@
+Train:
+X.shape: (6272, 3, 200, 200)
+y.shape: (6272,)
+y value counts:  (array([0, 1], dtype=int32), array([3132, 3140]))
+# Neural Network with 6162322 learnable parameters
+
+## Layer information
+
+name         size          total    cap.Y    cap.X    cov.Y    cov.X    filter Y    filter X    field Y    field X
+-----------  ----------  -------  -------  -------  -------  -------  ----------  ----------  ---------  ---------
+input0       3x200x200    120000   100.00   100.00   100.00   100.00         200         200        200        200
+conv2d1      16x200x200   640000   100.00   100.00     2.50     2.50           5           5          5          5
+conv2d2      16x200x200   640000    42.86    42.86     3.50     3.50           3           3          7          7
+maxpool2d3   16x100x100   160000    42.86    42.86     3.50     3.50           3           3          7          7
+conv2d4      32x100x100   320000    54.55    54.55     5.50     5.50           6           6         11         11
+conv2d5      32x100x100   320000    40.00    40.00     7.50     7.50           6           6         15         15
+maxpool2d6   32x50x50      80000    40.00    40.00     7.50     7.50           6           6         15         15
+conv2d7      64x50x50     160000    52.17    52.17    11.50    11.50          12          12         23         23
+conv2d8      64x50x50     160000    38.71    38.71    15.50    15.50          12          12         31         31
+maxpool2d9   64x25x25      40000    38.71    38.71    15.50    15.50          12          12         31         31
+conv2d10     128x25x25     80000    51.06    51.06    23.50    23.50          24          24         47         47
+conv2d11     128x25x25     80000    38.10    38.10    31.50    31.50          24          24         63         63
+maxpool2d12  128x12x12     18432    38.10    38.10    31.50    31.50          24          24         63         63
+conv2d13     256x12x12     36864    50.53    50.53    47.50    47.50          48          48         95         95
+conv2d14     256x12x12     36864    37.80    37.80    63.50    63.50          48          48        127        127
+maxpool2d15  256x6x6        9216    37.80    37.80    63.50    63.50          48          48        127        127
+dense16      512             512   100.00   100.00   100.00   100.00         200         200        200        200
+dropout17    512             512   100.00   100.00   100.00   100.00         200         200        200        200
+dense18      512             512   100.00   100.00   100.00   100.00         200         200        200        200
+dense19      2                 2   100.00   100.00   100.00   100.00         200         200        200        200
+
+Explanation
+    X, Y:    image dimensions
+    cap.:    learning capacity
+    cov.:    coverage of image
+    [35mmagenta[0m: capacity too low (<1/6)
+    [36mcyan[0m:    image coverage too high (>100%)
+    [31mred[0m:     capacity too low and coverage too high
+
+
+  epoch    train loss    valid loss    train/val    valid acc  dur
+-------  ------------  ------------  -----------  -----------  -------
+      1       [36m1.82114[0m       [32m1.72598[0m      1.05513      0.68091  135.17s
+      2       [36m1.69621[0m       [32m1.65747[0m      1.02337      0.74298  135.52s
+      3       [36m1.61355[0m       [32m1.61498[0m      0.99911      0.76657  135.48s
+      4       [36m1.57437[0m       [32m1.60668[0m      0.97989      0.77966  135.25s
+      5       [36m1.53257[0m       [32m1.58902[0m      0.96448      0.78101  135.42s
+      6       [36m1.48993[0m       [32m1.51698[0m      0.98217      0.79254  135.38s
+      7       [36m1.46104[0m       1.52135      0.96036      0.78394  135.41s
+      8       [36m1.41807[0m       [32m1.48277[0m      0.95637      0.79623  135.46s
+      9       [36m1.37973[0m       [32m1.42718[0m      0.96675      0.81908  135.39s
+     10       [36m1.34661[0m       [32m1.34382[0m      1.00207      0.84971  135.44s
+     11       [36m1.30048[0m       1.38756      0.93724      0.80733  135.36s
+     12       [36m1.25702[0m       1.46375      0.85877      0.80011  135.41s
+     13       [36m1.21896[0m       [32m1.28787[0m      0.94650      0.84462  135.43s
+     14       [36m1.18202[0m       1.55193      0.76165      0.78745  135.29s
+     15       [36m1.13910[0m       [32m1.20011[0m      0.94917      0.89851  135.30s
+     16       [36m1.09605[0m       1.22244      0.89660      0.87549  135.43s
+     17       [36m1.06295[0m       [32m1.18939[0m      0.89369      0.89851  135.27s
+     18       [36m1.02951[0m       [32m1.16515[0m      0.88359      0.90592  135.40s
+     19       [36m1.01217[0m       1.21993      0.82969      0.87625  135.40s
+     20       [36m0.97623[0m       1.17352      0.83188      0.90748  135.45s
+     21       [36m0.96728[0m       1.23914      0.78061      0.89772  135.49s
+     22       [36m0.94122[0m       1.23241      0.76372      0.88856  135.37s
+     23       [36m0.92839[0m       1.26008      0.73677      0.89072  135.37s
+Early stopping.
+Best valid loss was 1.165153 at epoch 18.
+Loaded parameters to layer 'conv2d1' (shape 16x3x5x5).
+Loaded parameters to layer 'conv2d1' (shape 16).
+Loaded parameters to layer 'conv2d2' (shape 16x16x3x3).
+Loaded parameters to layer 'conv2d2' (shape 16).
+Loaded parameters to layer 'conv2d4' (shape 32x16x3x3).
+Loaded parameters to layer 'conv2d4' (shape 32).
+Loaded parameters to layer 'conv2d5' (shape 32x32x3x3).
+Loaded parameters to layer 'conv2d5' (shape 32).
+Loaded parameters to layer 'conv2d7' (shape 64x32x3x3).
+Loaded parameters to layer 'conv2d7' (shape 64).
+Loaded parameters to layer 'conv2d8' (shape 64x64x3x3).
+Loaded parameters to layer 'conv2d8' (shape 64).
+Loaded parameters to layer 'conv2d10' (shape 128x64x3x3).
+Loaded parameters to layer 'conv2d10' (shape 128).
+Loaded parameters to layer 'conv2d11' (shape 128x128x3x3).
+Loaded parameters to layer 'conv2d11' (shape 128).
+Loaded parameters to layer 'conv2d13' (shape 256x128x3x3).
+Loaded parameters to layer 'conv2d13' (shape 256).
+Loaded parameters to layer 'conv2d14' (shape 256x256x3x3).
+Loaded parameters to layer 'conv2d14' (shape 256).
+Loaded parameters to layer 'dense16' (shape 9216x512).
+Loaded parameters to layer 'dense16' (shape 512).
+Loaded parameters to layer 'dense18' (shape 512x512).
+Loaded parameters to layer 'dense18' (shape 512).
+Loaded parameters to layer 'dense19' (shape 512x2).
+Loaded parameters to layer 'dense19' (shape 2).
+Train set AUC ROC:  0.988909937282
+Test:
+X_test.shape: (992, 3, 200, 200)
