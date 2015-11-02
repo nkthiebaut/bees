@@ -45,7 +45,7 @@ class DataManager(object):
         tmp = 'test' if self.test else 'train'
         print " ---- Loading "+tmp+" set ----"
         for i, img_id in tqdm(enumerate(self.images_id)):
-            features = get_image(self.path, img_id)
+            features = get_image(self.path, img_id, width=self.width)
             if self.X is None:
                 self.n_features = features.shape[0]
                 self.X = np.zeros((self.n_images, self.n_features),

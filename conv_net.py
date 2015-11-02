@@ -30,6 +30,8 @@ from lasagne.layers import InputLayer
 from lasagne.layers import DropoutLayer
 from lasagne.layers import Conv2DLayer
 from lasagne.layers import MaxPool2DLayer
+# from lasagne.layers.cuda_convnet import Conv2DCCLayer
+# from lasagne.layers.cuda_convnet import MaxPool2DCCLayer
 from lasagne.nonlinearities import softmax
 from lasagne.nonlinearities import LeakyRectify
 from lasagne.nonlinearities import rectify
