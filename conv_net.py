@@ -32,6 +32,7 @@ from lasagne.layers import Conv2DLayer
 from lasagne.layers import MaxPool2DLayer
 from lasagne.nonlinearities import softmax
 from lasagne.nonlinearities import LeakyRectify
+from lasagne.nonlinearities import rectify
 
 from adaptative_learning import AdjustVariable
 from adaptative_learning import EarlyStopping
@@ -45,9 +46,9 @@ batch_size = 64
 nb_channels = 3
 crop_size = 200
 init_learning_rate = 0.01
-activation_function = LeakyRectify(0.1)
+activation_function = rectify
 lambda2=0.0005
-max_epochs=50
+max_epochs=100
 exp_name=sys.argv[1]
 # ----------------------
 
@@ -96,15 +97,16 @@ layers_mnist = [
 layers_A = [
     (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (9, 9), 'pad': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (5, 5), 'stride': 2,'pad': 2, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3),'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (Conv2DLayer, {'num_filters': 64, 'filter_size': (7, 7), 'pad': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (5, 5), 'stride':2, 'pad': 2, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (5, 5), 'stride':2, 'pad': 2, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (5, 5), 'stride':2, 'pad': 2, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (Conv2DLayer, {'num_filters': 128, 'filter_size': (5, 5), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
@@ -151,27 +153,64 @@ layers_simonyan = [
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
-layers_team_oO = [
+VGGNet = [
     (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
-    (Conv2DLayer, {'num_filters': 16, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 16, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
-    (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 32, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
-    (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 64, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
     (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 128, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
     (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 256, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
+    (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+
+    (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+]
+
+
+layers_team_oO = [
+    (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (5, 5), 'stride': 2, 'pad': 2, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (5, 5), 'stride': 2, 'pad': 2, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
@@ -210,7 +249,7 @@ layers_krizhevsky = [
 
 
 conv_net = NeuralNet(
-    layers_A,
+    VGGNet,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(init_learning_rate)),
