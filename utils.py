@@ -99,11 +99,12 @@ def data_augmentation_test(img_id=1, crop_size=200, pad_size=100):
 
     im_size = Xb.shape[0]
     frame_size = im_size + 2 * pad_size
-    print Xb.shape
+    print "X shape ", Xb.shape
     padded = np.zeros((3, frame_size, frame_size))
     for i in range(3):
         padded[i] = pad(np.swapaxes(Xb,0,2)[i], (pad_size, pad_size) , 'reflect')
     padded = np.swapaxes(padded,0,2)
+    print "Padded shape ", padded.shape
 
     lower_cut = (im_size - crop_size)/2 + pad_size
     upper_cut = (im_size + crop_size)/2 + pad_size
@@ -120,7 +121,9 @@ def data_augmentation_test(img_id=1, crop_size=200, pad_size=100):
     tf = AffineTransform(scale=(scaling_factor,scaling_factor), rotation=angle, shear=None,
                          translation=(trans_x, trans_y))
     padded = warp(padded, (tf_shift + (tf + tf_shift_inv)).inverse)
+    print "Padded shape after transform ", padded.shape
 
     # Crop to desired size
     tmp = padded[lower_cut:upper_cut, lower_cut:upper_cut, :]
+    print "Finally, cuts and shape: ", lower_cut, upper_cut, padded.shape
     plt.imshow(tmp)

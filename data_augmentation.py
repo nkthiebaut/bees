@@ -62,14 +62,14 @@ class DataAugmentationBatchIterator(BatchIterator):
         padded = np.zeros((self.nb_channels, frame_size, frame_size))
 
         # Necessary shifts to allow rotation around center
-        tf_shift = AffineTransform(translation=[-shift_x, -shift_y])
-        tf_shift_inv = AffineTransform(translation=[shift_x, shift_y])
+        tf_shift = SimilarityTransform(translation=[-shift_x, -shift_y])
+        tf_shift_inv = SimilarityTransform(translation=[shift_x, shift_y])
 
-        for i in range(bs):
+        for i in xrange(bs):
             pic = Xb[i]  # Picture as a [width, height, nb_channels] np.array
 
             # Pad image to avoid black regions after zoom/rotation/translation
-            for j in range(self.nb_channels):
+            for j in xrange(self.nb_channels):
                 padded[j] = pad(np.swapaxes(pic, 0, 2)[j], (self.pad_size, self.pad_size), 'reflect')
             padded = np.swapaxes(padded, 0, 2)
 
@@ -80,11 +80,11 @@ class DataAugmentationBatchIterator(BatchIterator):
             trans_y = np.random.randint(-self.max_trans, self.max_trans)
 
             # Apply similarity transform to zoom, rotate and translate
-            tf = AffineTransform(scale=scaling_factor, rotation=angle, translation=(trans_x, trans_y), shear=self.shear)
-            Xb[i] = warp(Xb[i], (tf_shift + (tf + tf_shift_inv)).inverse)
+            tf = SimilarityTransform(scale=scaling_factor, rotation=angle, translation=(trans_x, trans_y))
+            padded = warp(padded, (tf_shift + (tf + tf_shift_inv)).inverse)
 
             # Crop to desired size
-            Xb[i] = Xb[i, lower_cut:upper_cut, lower_cut:upper_cut, :]
+            Xb[i] = padded[lower_cut:upper_cut, lower_cut:upper_cut, :]
 
         Xb = np.swapaxes(Xb, 1, 3)
         Xb *= np.float32(255.)
