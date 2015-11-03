@@ -12,7 +12,9 @@ from datetime import date
 
 from sklearn.metrics import roc_auc_score
 
-from lasagne.updates import nesterov_momentum, sgd, adam
+from lasagne.updates import nesterov_momentum
+from lasagne.updates import sgd
+from lasagne.updates import adam
 
 from nolearn.lasagne import NeuralNet
 from nolearn.lasagne import BatchIterator
@@ -44,7 +46,7 @@ from data_augmentation import FlipBatchIterator
 sys.setrecursionlimit(10000)
 
 # ----- Parameters -----
-batch_size = 48
+batch_size = 64
 nb_channels = 3
 crop_size = 200
 init_learning_rate = 0.01
@@ -254,18 +256,20 @@ layers_krizhevsky = [
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
-def myaccuracy(y_true, y_prob):
+def auc_roc(y_true, y_prob):
     return roc_auc_score(y_true, y_prob[:,1])
 
 conv_net = NeuralNet(
     layers_simonyan,
+    update=adam,
+    update_learning_rate=0.0002,
 
-    update=nesterov_momentum,
-    update_learning_rate=theano.shared(float32(init_learning_rate)),
-    update_momentum=theano.shared(float32(0.9)),
+    #update=nesterov_momentum,
+    #update_learning_rate=theano.shared(float32(init_learning_rate)),
+    #update_momentum=theano.shared(float32(0.9)),
     on_epoch_finished=[
-        AdjustVariable('update_learning_rate', start=init_learning_rate, stop=0.0001),
-        AdjustVariable('update_momentum', start=0.9, stop=0.999),
+        #AdjustVariable('update_learning_rate', start=init_learning_rate, stop=0.0001),
+        #AdjustVariable('update_momentum', start=0.9, stop=0.999),
         EarlyStopping(patience=5),
         ],
 
@@ -277,7 +281,7 @@ conv_net = NeuralNet(
     objective_lambda2=lambda2,
 
     #train_split=TrainSplit(eval_size=0.25, stratify=True)
-    custom_score=('AUC-ROC', myaccuracy),
+    custom_score=('AUC-ROC', auc_roc),
     max_epochs=max_epochs,
     verbose=3,
     )
@@ -293,7 +297,6 @@ with open('models/conv_net_'+name+'.pkl', 'wb') as f:
 train_predictions = conv_net.predict_proba(X)
 make_submission_file(train_predictions[:sample_size], images_id[:sample_size], output_filepath='submissions/training_'+name+'.csv')
 plot_loss(conv_net,"submissions/loss_"+name+".png", show=False)
-print "Train set AUC ROC: ", roc_auc_score(y, train_predictions[:, 1])
 
 # ----- Test set ----
 X_test, _, images_id_test = load_numpy_arrays('test.npz')
