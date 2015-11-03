@@ -59,7 +59,6 @@ class DataAugmentationBatchIterator(BatchIterator):
         upper_cut = (frame_size + self.crop_size)/2
         shift_x = frame_size / 2
         shift_y = shift_x
-        padded = np.zeros((self.nb_channels, frame_size, frame_size))
 
         # Necessary shifts to allow rotation around center
         tf_shift = SimilarityTransform(translation=[-shift_x, -shift_y])
@@ -69,6 +68,7 @@ class DataAugmentationBatchIterator(BatchIterator):
             pic = Xb[i]  # Picture as a [width, height, nb_channels] np.array
 
             # Pad image to avoid black regions after zoom/rotation/translation
+            padded = np.zeros((self.nb_channels, frame_size, frame_size))
             for j in xrange(self.nb_channels):
                 padded[j] = pad(np.swapaxes(pic, 0, 2)[j], (self.pad_size, self.pad_size), 'reflect')
             padded = np.swapaxes(padded, 0, 2)

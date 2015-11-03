@@ -144,9 +144,9 @@ layers_simonyan = [
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+    #(Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    #(Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    #(MaxPool2DLayer, {'pool_size': (2, 2)}),
 
     (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
     (DropoutLayer, {}),
@@ -251,7 +251,7 @@ layers_krizhevsky = [
 
 
 conv_net = NeuralNet(
-    VGGNet,
+    layers_simonyan,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(init_learning_rate)),
