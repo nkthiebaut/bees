@@ -49,7 +49,7 @@ def get_image(path, img_id, n_channels=3, width=None):
         # raise Warning('Warning: Image ' + str(img_id) + ' is RGBA (alpha), converting to RGB.')
         pixels = pixels[:, :, :n_channels]
     if width is not None:
-        pixels = pixel[:width, :width, :]
+        pixels = pixels[:width, :width, :]
     return pixels.flatten()
 
 

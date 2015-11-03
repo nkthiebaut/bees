@@ -15,6 +15,7 @@ sys.setrecursionlimit(1000000)
 from tqdm import tqdm
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
+from skimage.util import pad
 
 from utils import get_image
 
@@ -57,12 +58,10 @@ class DataManager(object):
             self.X[i, :] = features
         print "Feature_matrix shape: {}".format(self.X.shape)
 
-
     def shuffle(self):
         """ Shuffle the features, labels and ids"""
         print "{} shuffles.".format(type(self).__name__)
-        self.X, self.y, self.images_id = shuffle(self.X, self.y, self.images_id,
-                                                 random_state=42)
+        self.X, self.y, self.images_id = shuffle(self.X, self.y, self.images_id)
 
     def normalize(self):
         """  Normalize all RGB channels separately, accross the training set """
@@ -77,7 +76,7 @@ class DataManager(object):
             self.std_scaler = []
         # Normalize over each RGB channel separately
         normalized = []
-        for i in tqdm(range(self.n_channels)):
+        for i in tqdm(xrange(self.n_channels)):
             if not self.test:
                 ss = StandardScaler().fit(rgb[:, :, i])
                 self.std_scaler.append(ss)
@@ -87,12 +86,35 @@ class DataManager(object):
         self.X = np.zeros((self.n_images, self.n_features),
                                      dtype=np.float32)
 
-        for i in range(self.n_images):
+        for i in xrange(self.n_images):
             self.X[i, :] = normalized[:, i, :].flatten(order="F")
 
         if not self.test:
             with open('std_scaler.pkl', 'wb') as f:
                 cPickle.dump(self.std_scaler, f)
+
+    def pad(self, new_width):
+        """ Pad pictures with reflections
+        :param new_width: desired pictures width (and height)
+        :return:
+        """
+        print "{} is padding pictures.".format(type(self).__name__)
+        pad_size = new_width - self.width
+        new_X = np.zeros((self.n_images, new_width * new_width * self.n_channels))
+        pre_pad = pad_size // 2 + pad_size % 2
+        post_pad = pad_size // 2
+        if pad_size < 0:
+            raise ValueError('new_width should not be smaller than the original one.')
+
+        for i in tqdm(xrange(self.n_images)):
+            padded = np.zeros((3, new_width, new_width))
+            pic = self.X[i].reshape(self.width, self.width, self.n_channels)
+            for j in xrange(self.n_channels):
+                padded[j] = pad(np.swapaxes(pic, 0, 2)[j], (pre_pad, post_pad), 'reflect')
+            padded = np.swapaxes(padded, 0, 2)
+            new_X[i] = padded.flatten()
+        self.width = new_width
+        self.X = new_X
 
     def save_to_lasagne_format(self, filename=None):
         """  Save reshaped feature matrix, labels and ids in a cPickle file

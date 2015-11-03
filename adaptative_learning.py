@@ -7,6 +7,7 @@ __date__ = '25/10/15'
 import numpy as np
 from utils import float32
 
+
 class AdjustVariable(object):
     def __init__(self, name, start=0.03, stop=0.001):
         self.name = name
@@ -20,6 +21,7 @@ class AdjustVariable(object):
         epoch = train_history[-1]['epoch']
         new_value = float32(self.ls[epoch - 1])
         getattr(nn, self.name).set_value(new_value)
+
 
 class EarlyStopping(object):
     def __init__(self, patience=10):
