@@ -30,8 +30,8 @@ from lasagne.layers import InputLayer
 from lasagne.layers import DropoutLayer
 from lasagne.layers import Conv2DLayer
 from lasagne.layers import MaxPool2DLayer
-# from lasagne.layers.cuda_convnet import Conv2DCCLayer
-# from lasagne.layers.cuda_convnet import MaxPool2DCCLayer
+#from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
+#from lasagne.layers.cuda_convnet import MaxPool2DCCLayer as MaxPool2DLayer
 from lasagne.nonlinearities import softmax
 from lasagne.nonlinearities import LeakyRectify
 from lasagne.nonlinearities import rectify
@@ -44,7 +44,7 @@ from data_augmentation import FlipBatchIterator
 sys.setrecursionlimit(10000)
 
 # ----- Parameters -----
-batch_size = 64
+batch_size = 48
 nb_channels = 3
 crop_size = 200
 init_learning_rate = 0.01
@@ -67,7 +67,11 @@ print "y value counts: ", np.unique(y, return_counts=True)
 layers_test = [
     (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
-    (DenseLayer, {'num_units': 64}),
+    (Conv2DLayer, {'num_filters': 16, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+
+    (DenseLayer, {'num_units': 16}),
 
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
@@ -127,6 +131,7 @@ layers_A = [
 
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
+
 layers_simonyan = [
     (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
@@ -144,9 +149,9 @@ layers_simonyan = [
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    #(Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    #(Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-    #(MaxPool2DLayer, {'pool_size': (2, 2)}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
     (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
     (DropoutLayer, {}),
@@ -249,6 +254,8 @@ layers_krizhevsky = [
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
+def myaccuracy(y_true, y_prob):
+    return roc_auc_score(y_true, y_prob[:,1])
 
 conv_net = NeuralNet(
     layers_simonyan,
@@ -262,14 +269,15 @@ conv_net = NeuralNet(
         EarlyStopping(patience=5),
         ],
 
-    batch_iterator_train=FlipBatchIterator(batch_size=batch_size),
-    #batch_iterator_train=DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size),
+    #batch_iterator_train=FlipBatchIterator(batch_size=batch_size),
+    batch_iterator_train=DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size),
     #batch_iterator_test=DataAugmentationBatchIterator(batch_size=31, crop_size=crop_size),
 
     objective=regularization_objective,
     objective_lambda2=lambda2,
 
-    #train_split=TrainSplit(eval_size=0.25, stratify=True),
+    #train_split=TrainSplit(eval_size=0.25, stratify=True)
+    custom_score=('AUC-ROC', myaccuracy),
     max_epochs=max_epochs,
     verbose=3,
     )
