@@ -1,10 +1,10 @@
 
-+ objective function : AUC ROC
-+ Data Augmentation
++ Data Augmentation: try various settings (no rotations?)
 + Network :  
     + Try drop-out at every level
-    + Leaky rectifiers
-    + larger filters (with stride)
-+ Pre-training
+    + Leaky rectifiers vs standard ReLU
+    + Fix slowness when stride is not zero
++ Pre-trained networks
 + Normalize accross channels
-+ Model votes
++ Unbalanced data set
++ Model votes, meta model
