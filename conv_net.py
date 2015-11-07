@@ -296,7 +296,7 @@ conv_net.fit(X, y)
 name = exp_name + '_'+ str(date.today())
 with open('models/conv_net_'+name+'.pkl', 'wb') as f:
     cPickle.dump(conv_net, f, -1)
-conv_net.save_params_to('weights'+name)
+conv_net.save_params_to('params_'+name)
 
 # ----- Train set ----
 train_predictions = conv_net.predict_proba(X)
