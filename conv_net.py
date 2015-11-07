@@ -46,13 +46,13 @@ from data_augmentation import FlipBatchIterator
 sys.setrecursionlimit(10000)
 
 # ----- Parameters -----
-batch_size = 48
+batch_size = 64
 nb_channels = 3
-crop_size = 200
+crop_size = 224
 init_learning_rate = 0.01
 activation_function = rectify
 lambda2 = 0.0005
-max_epochs = 50
+max_epochs = 30
 exp_name = sys.argv[1]
 # ----------------------
 
@@ -266,7 +266,7 @@ def auc_roc(y_true, y_prob):
     return roc_auc_score(y_true, y_prob[:,1])
 
 conv_net = NeuralNet(
-    VGG16,
+    AlexNet,
 
     update=nesterov_momentum,
     update_learning_rate=theano.shared(float32(init_learning_rate)),
@@ -296,7 +296,7 @@ conv_net.fit(X, y)
 name = exp_name + '_'+ str(date.today())
 with open('models/conv_net_'+name+'.pkl', 'wb') as f:
     cPickle.dump(conv_net, f, -1)
-conv_net.save_weights_to('weights'+name)
+conv_net.save_params_to('weights'+name)
 
 # ----- Train set ----
 train_predictions = conv_net.predict_proba(X)
@@ -308,5 +308,5 @@ X_test, _, images_id_test = load_numpy_arrays('test.npz')
 print "Test:"
 print "X_test.shape:", X_test.shape
 predictions = conv_net.predict_proba(X_test)
-make_submission_file(predictions, images_id_test, output_filepath='submissions/submission_'+str(date.today())+'.csv')
+make_submission_file(predictions, images_id_test, output_filepath='submissions/submission_'+name+'.csv')
 
