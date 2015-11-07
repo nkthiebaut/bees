@@ -18,6 +18,7 @@ from skimage.transform import warp
 from skimage.util import pad
 from math import pi
 
+
 def float32(k):
     return np.cast['float32'](k)
 
@@ -79,7 +80,8 @@ def regularization_objective(layers, lambda1=0., lambda2=0., *args, **kwargs):
     losses += lambda1 * sum_abs_weights + lambda2 * sum_squared_weights
     return losses
 
-def plot_loss(net, filename="submissions/loss_"+str(date.today())+".png", show=False):
+
+def plot_loss(net, filename="submissions/loss_" + str(date.today()) + ".png", show=False):
     train_loss = np.array([i["train_loss"] for i in net.train_history_])
     valid_loss = np.array([i["valid_loss"] for i in net.train_history_])
     plt.plot(train_loss, linewidth=3, label="train")
@@ -88,37 +90,38 @@ def plot_loss(net, filename="submissions/loss_"+str(date.today())+".png", show=F
     plt.legend()
     plt.xlabel("epoch")
     plt.ylabel("loss")
-    #plt.ylim(1e-3, 1e-2)
+    # plt.ylim(1e-3, 1e-2)
     plt.yscale("log")
     plt.savefig(filename)
     if show:
         plt.show()
 
+
 def data_augmentation_test(img_id=1, crop_size=200, pad_size=100):
-    Xb = np.array(Image.open('data/images/train/'+str(img_id)+'.jpg'), dtype=np.uint8)/np.float32(255.)
+    Xb = np.array(Image.open('data/images/train/' + str(img_id) + '.jpg'), dtype=np.uint8) / np.float32(255.)
 
     im_size = Xb.shape[0]
     frame_size = im_size + 2 * pad_size
     print "X shape ", Xb.shape
     padded = np.zeros((3, frame_size, frame_size))
     for i in range(3):
-        padded[i] = pad(np.swapaxes(Xb,0,2)[i], (pad_size, pad_size) , 'reflect')
-    padded = np.swapaxes(padded,0,2)
+        padded[i] = pad(np.swapaxes(Xb, 0, 2)[i], (pad_size, pad_size), 'reflect')
+    padded = np.swapaxes(padded, 0, 2)
     print "Padded shape ", padded.shape
 
-    lower_cut = (im_size - crop_size)/2 + pad_size
-    upper_cut = (im_size + crop_size)/2 + pad_size
-    shift_x = frame_size/2
+    lower_cut = (im_size - crop_size) / 2 + pad_size
+    upper_cut = (im_size + crop_size) / 2 + pad_size
+    shift_x = frame_size / 2
     shift_y = shift_x
     tf_shift = AffineTransform(translation=[-shift_x, -shift_y])
     tf_shift_inv = AffineTransform(translation=[shift_x, shift_y])
 
-    scaling_factor = 0.2*np.random.random() + 0.9
-    angle =2* pi * (np.random.random()-0.5)
+    scaling_factor = 0.2 * np.random.random() + 0.9
+    angle = 2 * pi * (np.random.random() - 0.5)
     trans_x = np.random.randint(-5, 5)
     trans_y = np.random.randint(-5, 5)
 
-    tf = AffineTransform(scale=(scaling_factor,scaling_factor), rotation=angle, shear=None,
+    tf = AffineTransform(scale=(scaling_factor, scaling_factor), rotation=angle, shear=None,
                          translation=(trans_x, trans_y))
     padded = warp(padded, (tf_shift + (tf + tf_shift_inv)).inverse)
     print "Padded shape after transform ", padded.shape
@@ -128,3 +131,33 @@ def data_augmentation_test(img_id=1, crop_size=200, pad_size=100):
     print "Finally, cuts and shape: ", lower_cut, upper_cut, padded.shape
     plt.imshow(tmp)
 
+
+import argparse
+
+
+def GetOptions():
+    """ Retrieve options from standard input """
+    p = argparse.ArgumentParser(description='Neural net. training',
+                                formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    p.add_argument('network', metavar="network", type=str, default='VGG16',
+                   help='Network name (should be defined in the model zoo).')
+    p.add_argument('--batch_size', metavar="batch_size", type=int, default=48,
+                   help='Batch size')
+    p.add_argument('--max_epochs', metavar="max_epochs", type=int, default=50,
+                   help='Minimum distance value')
+    p.add_argument('--channels', metavar="channel", type=int, default=3,
+                   help='Number of color channels (3 for RGB)')
+    p.add_argument('--crop_size', metavar="crop_size", type=int, default=200,
+                   help='Pictures batch data augmentation crop size.')
+    p.add_argument('--data-aug', metavar="data_aug_type", type=str, default='full',
+                   help='Batch data augmentation type')
+    p.add_argument('--activation', metavar="activation", type=str, default='rectify',
+                   help='Activation function (rectify, leaky_rectify, very_leaky_rectify')
+    p.add_argument('--learning_rate', metavar="learning_rate", type=float, default=0.01,
+                   help='Initial learning rate of Nesterov momentum method')
+    p.add_argument('--lambda2', metavar="lambda2", type=float, default=0.0005,
+                   help='Lambda2 regularization term')
+
+    p.add_argument('--excited', action="store_true", dest="excited", help='')
+    args = vars(p.parse_args())
+    return args
