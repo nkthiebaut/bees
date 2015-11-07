@@ -6,5 +6,6 @@
     + Fix slowness when stride is not zero
 + Pre-trained networks
 + Normalize accross channels
-+ Unbalanced data set
++ Progressive unbalancing of batches (team_o_O)
 + Model votes, meta model
+ 

@@ -127,3 +127,4 @@ def data_augmentation_test(img_id=1, crop_size=200, pad_size=100):
     tmp = padded[lower_cut:upper_cut, lower_cut:upper_cut, :]
     print "Finally, cuts and shape: ", lower_cut, upper_cut, padded.shape
     plt.imshow(tmp)
+

@@ -46,14 +46,14 @@ from data_augmentation import FlipBatchIterator
 sys.setrecursionlimit(10000)
 
 # ----- Parameters -----
-batch_size = 64
+batch_size = 48
 nb_channels = 3
 crop_size = 200
 init_learning_rate = 0.01
 activation_function = rectify
-lambda2=0.0005
-max_epochs=100
-exp_name=sys.argv[1]
+lambda2 = 0.0005
+max_epochs = 50
+exp_name = sys.argv[1]
 # ----------------------
 
 X, y, images_id = load_numpy_arrays('train.npz')
@@ -134,23 +134,27 @@ layers_A = [
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
-layers_simonyan = [
+VGG16 = [
     (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
     (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
+    (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
+    (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
@@ -158,11 +162,12 @@ layers_simonyan = [
     (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
     (DropoutLayer, {}),
     (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
 
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
-VGGNet = [
+VGG19 = [
     (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
     (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
@@ -194,6 +199,7 @@ VGGNet = [
     (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
     (DropoutLayer, {}),
     (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
 
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
@@ -226,15 +232,15 @@ layers_team_oO = [
     (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
     (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-    (DropoutLayer, {}),
     (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
     (DropoutLayer, {}),
     (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+    (DropoutLayer, {}),
 
     (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
 ]
 
-layers_krizhevsky = [
+AlexNet = [
     (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
     (Conv2DLayer, {'num_filters': 96, 'filter_size': (11, 11), 'stride': 4, 'nonlinearity':activation_function}),
@@ -260,16 +266,14 @@ def auc_roc(y_true, y_prob):
     return roc_auc_score(y_true, y_prob[:,1])
 
 conv_net = NeuralNet(
-    layers_simonyan,
-    update=adam,
-    update_learning_rate=0.0002,
+    VGG16,
 
-    #update=nesterov_momentum,
-    #update_learning_rate=theano.shared(float32(init_learning_rate)),
-    #update_momentum=theano.shared(float32(0.9)),
+    update=nesterov_momentum,
+    update_learning_rate=theano.shared(float32(init_learning_rate)),
+    update_momentum=theano.shared(float32(0.9)),
     on_epoch_finished=[
-        #AdjustVariable('update_learning_rate', start=init_learning_rate, stop=0.0001),
-        #AdjustVariable('update_momentum', start=0.9, stop=0.999),
+        AdjustVariable('update_learning_rate', start=init_learning_rate, stop=0.0001),
+        AdjustVariable('update_momentum', start=0.9, stop=0.999),
         EarlyStopping(patience=5),
         ],
 
@@ -292,6 +296,7 @@ conv_net.fit(X, y)
 name = exp_name + '_'+ str(date.today())
 with open('models/conv_net_'+name+'.pkl', 'wb') as f:
     cPickle.dump(conv_net, f, -1)
+conv_net.save_weights_to('weights'+name)
 
 # ----- Train set ----
 train_predictions = conv_net.predict_proba(X)
