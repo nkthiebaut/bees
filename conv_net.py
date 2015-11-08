@@ -41,6 +41,7 @@ from adaptative_learning import AdjustVariable
 from adaptative_learning import EarlyStopping
 from data_augmentation import DataAugmentationBatchIterator
 from data_augmentation import FlipBatchIterator
+from data_augmentation import ResamplingBatchIterator
 
 sys.setrecursionlimit(10000)
 
@@ -234,7 +235,7 @@ def auc_roc(y_true, y_prob):
 
 
 def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_epochs=50, nb_channels=3, crop_size=200,
-                  activation_function=rectify, batch_size=48, init_learning_rate=0.01):
+                  activation_function=rectify, batch_size=48, init_learning_rate=0.01, dataset_ratio=3.8):
     """Build nolearn neural network and returns it
 
     :param network: pre-defined network name
@@ -247,6 +248,9 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
         batch_iterator_train = FlipBatchIterator(batch_size=batch_size)
     elif data_augmentation == 'full':
         batch_iterator_train = DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size)
+    elif data_augmentation == 'resampling':
+        batch_iterator_train = ResamplingBatchIterator(batch_size=batch_size, crop_size=crop_size,
+                                                       max_epochs=max_epochs, dataset_ratio=dataset_ratio)
     else:
         raise ValueError(data_augmentation+' is an unknown data augmentation strategy.')
 
