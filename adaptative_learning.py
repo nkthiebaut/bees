@@ -24,7 +24,7 @@ class AdjustVariable(object):
 
 
 class EarlyStopping(object):
-    def __init__(self, patience=10):
+    def __init__(self, patience=5):
         self.patience = patience
         self.best_valid = np.inf
         self.best_valid_epoch = 0

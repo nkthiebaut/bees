@@ -13,6 +13,18 @@ from skimage.transform import warp
 from skimage.util import pad
 
 
+class FlipBatchIterator(BatchIterator):
+    def transform(self, Xb, yb):
+        Xb, yb = super(FlipBatchIterator, self).transform(Xb, yb)
+
+        # Flip half of the images in this batch at random:
+        bs = Xb.shape[0]
+        indices = np.random.choice(bs, bs / 2, replace=False)
+        Xb[indices] = Xb[indices, :, :, ::-1]
+
+        return Xb, yb
+
+
 class DataAugmentationBatchIterator(BatchIterator):
     def __init__(self, batch_size, crop_size=200, pad_size=100, nb_channels=3, scale_delta=0.2, max_trans=5,
                  angle_factor=1., shear=None):
@@ -46,7 +58,7 @@ class DataAugmentationBatchIterator(BatchIterator):
         indices = np.random.choice(bs, bs / 2, replace=False)
         Xb[indices] = Xb[indices, :, :, ::-1]
 
-        # Divide pixels values by 255 to make it fit in [-1;1], for SimilarityTransform compatibility
+        #  Divide pixels values by 255 to make it fit in [-1;1], for SimilarityTransform compatibility
         Xb /= np.float32(255.)
 
         # Change shape from [Batch_size, nb_channels, width, height] to [Batch_size, width, height, nb_channels]
@@ -55,8 +67,8 @@ class DataAugmentationBatchIterator(BatchIterator):
         # Define relevant shapes
         im_size = Xb.shape[1]
         frame_size = im_size + 2 * self.pad_size
-        lower_cut = (frame_size - self.crop_size)/2
-        upper_cut = (frame_size + self.crop_size)/2
+        lower_cut = (frame_size - self.crop_size) / 2
+        upper_cut = (frame_size + self.crop_size) / 2
         shift_x = frame_size / 2
         shift_y = shift_x
 
@@ -73,9 +85,9 @@ class DataAugmentationBatchIterator(BatchIterator):
                 padded[j] = pad(np.swapaxes(pic, 0, 2)[j], (self.pad_size, self.pad_size), 'reflect')
             padded = np.swapaxes(padded, 0, 2)
 
-            # Pick random values
-            scaling_factor = 2 * np.random.random() * self.scale_delta + (1.-self.scale_delta)
-            angle = 2 * pi * (np.random.random()-0.5) * self.angle_factor
+            #  Pick random values
+            scaling_factor = 2 * np.random.random() * self.scale_delta + (1. - self.scale_delta)
+            angle = 2 * pi * (np.random.random() - 0.5) * self.angle_factor
             trans_x = np.random.randint(-self.max_trans, self.max_trans)
             trans_y = np.random.randint(-self.max_trans, self.max_trans)
 
@@ -90,14 +102,32 @@ class DataAugmentationBatchIterator(BatchIterator):
         Xb *= np.float32(255.)
         return Xb, yb
 
-class FlipBatchIterator(BatchIterator):
 
-    def transform(self, Xb, yb):
-        Xb, yb = super(FlipBatchIterator, self).transform(Xb, yb)
+class ResamplingBatchIterator(DataAugmentationBatchIterator):
+    """
+    Batch iterators that initially equalize classes and gradualy decreases balance to reach sample imbalance
+    Adapted from https://github.com/sveitser/kaggle_diabetic/blob/master/iterator.py
+    """
 
-        # Flip half of the images in this batch at random:
-        bs = Xb.shape[0]
-        indices = np.random.choice(bs, bs / 2, replace=False)
-        Xb[indices] = Xb[indices, :, :, ::-1]
+    def __init__(self, batch_size, max_epochs, dataset_ratio):
+        super(ResamplingBatchIterator, self).__init__(batch_size)
+        self.max_epochs = max_epochs
+        self.dataset_ratio = dataset_ratio
+        self.count = 0
 
-        return Xb, yb
+    def __call__(self, X, y=None, transform=None):
+        if y is not None:
+            #  Ratio changes gradually from dataset_ratio to 1
+            ratio = self.dataset_ratio * (self.max_epochs - self.count) + self.count / self.max_epochs
+            self.count += 1
+            p = np.zeros(len(y))
+            weights = (ratio, 1)
+            for i, weight in enumerate(weights):
+                p[y == i] = weight
+            indices = np.random.choice(np.arange(len(y)), size=len(y), replace=True,
+                                       p=np.array(p) / p.sum())
+            X = X[indices]
+            y = y[indices]
+        self.tf = transform
+        self.X, self.y = X, y
+        return self

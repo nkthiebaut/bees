@@ -7,7 +7,7 @@ __date__ = '09/10/15'
 from DataManager import DataManager
 
 
-def prepare_data(name='', width = 224, balanced=True):
+def prepare_data(name='', width=200, balanced=True):
     DM = DataManager()
     if balanced:
         DM.equalize_classes()

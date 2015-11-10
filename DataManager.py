@@ -34,7 +34,7 @@ class DataManager(object):
         self.y = pd.read_csv("data/"+labels_file, index_col=0)
         self.n_classes = self.y['genus'].value_counts()
         self.images_id = np.array(self.y.index.tolist())
-        self.y = np.array(self.y['genus']).astype(np.int32)#.reshape(-1, 1)
+        self.y = np.array(self.y['genus']).astype(np.int32)
 
         self.n_images = self.y.shape[0]
         self.n_features = None
@@ -65,7 +65,6 @@ class DataManager(object):
 
     def normalize(self):
         """  Normalize all RGB channels separately, accross the training set """
-        # self.ss = StandardScaler()
         print "{} is normalizing per RGB channel.".format(type(self).__name__)
         rgb = self.X.reshape(self.n_images, self.width*self.width, self.n_channels).astype(np.float32)
 
@@ -123,11 +122,9 @@ class DataManager(object):
         print "{} saving datas.".format(type(self).__name__)
         if filename is None:
             filename = 'test.npz' if self.test else 'train.npz'
-            #filename = 'test.pkl' if self.test else 'train.pkl'
         with open(filename, 'wb') as f:
             np.savez(f, np.swapaxes(self.X.reshape(-1, self.width, self.width, self.n_channels), 1, 3),
                      self.y, self.images_id)
-            # cPickle.dump(self.get_in_lasagne_format(), f, protocol=-1)
 
     def get_in_lasagne_format(self):
         return (self.get_reshaped_features(), self.y, self.images_id)
@@ -136,7 +133,6 @@ class DataManager(object):
         """ Get numpy matrix with shape compatible with lasagne
         :return: reshaped matrix
         """
-        # return self.X.reshape(self.n_images, self.width, self.width, 3)
         return np.swapaxes(self.X.reshape(-1, self.width, self.width, self.n_channels), 1, 3)
 
     def show(self, img_id):
@@ -151,6 +147,7 @@ class DataManager(object):
     def equalize_classes(self, random=False):
         """ Copy underepresented class until equality is reached """
         print "{} is equalizing classes.".format(type(self).__name__)
+
         # Get classes occurrences difference
         delta = int(reduce(lambda x, y: x-y, self.n_classes))
 
@@ -174,7 +171,6 @@ class DataManager(object):
         self.images_id = np.append(self.images_id, images_id_append)
 
         print "Feature matrix shape after equalization: {}".format(self.X.shape)
-        #map(lambda x: np.append(x, x[j]), [self.X, self.y, self.images_id])
         self.n_images += delta
 
     def __getitem__(self, index):
