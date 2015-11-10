@@ -25,7 +25,7 @@ else:
     raise ValueError('Unknown activation function')
 
 print args
-X, y, images_id = load_numpy_arrays('train.npz')
+X, y, images_id = load_numpy_arrays(args['train_file'])
 sample_size = y.shape[0] - y.shape[0] % args['batch_size']
 X = X[:sample_size]
 y = y[:sample_size]
@@ -56,7 +56,7 @@ make_submission_file(train_predictions[:sample_size], images_id[:sample_size],
 plot_loss(conv_net, "submissions/loss_"+name+".png", show=False)
 
 # ----- Test set ----
-X_test, _, images_id_test = load_numpy_arrays('test.npz')
+X_test, _, images_id_test = load_numpy_arrays(args['test_file'])
 print "Test:"
 print "X_test.shape:", X_test.shape
 predictions = conv_net.predict_proba(X_test)

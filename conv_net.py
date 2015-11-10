@@ -42,6 +42,7 @@ from adaptative_learning import EarlyStopping
 from data_augmentation import DataAugmentationBatchIterator
 from data_augmentation import FlipBatchIterator
 from data_augmentation import ResamplingBatchIterator
+from data_augmentation import ResamplingFlipBatchIterator
 
 sys.setrecursionlimit(10000)
 
@@ -312,6 +313,9 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
         batch_iterator_train = DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size)
     elif data_augmentation == 'resampling':
         batch_iterator_train = ResamplingBatchIterator(batch_size=batch_size,
+                                                       max_epochs=max_epochs, dataset_ratio=dataset_ratio)
+    elif data_augmentation == 'resampling-flip':
+        batch_iterator_train = ResamplingFlipBatchIterator(batch_size=batch_size,
                                                        max_epochs=max_epochs, dataset_ratio=dataset_ratio)
     else:
         raise ValueError(data_augmentation+' is an unknown data augmentation strategy.')

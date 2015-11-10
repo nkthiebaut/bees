@@ -134,3 +134,33 @@ nb_channels, scale_delta, max_trans, angle_factor, shear)
         self.tf = transform
         self.X, self.y = X, y
         return self
+
+
+class ResamplingFlipBatchIterator(FlipBatchIterator):
+    """
+    Batch iterators that initially equalize classes and gradualy decreases balance to reach sample imbalance
+    Adapted from https://github.com/sveitser/kaggle_diabetic/blob/master/iterator.py
+    """
+
+    def __init__(self, batch_size, max_epochs, dataset_ratio):
+        super(ResamplingFlipBatchIterator, self).__init__(batch_size)
+        self.max_epochs = max_epochs
+        self.dataset_ratio = dataset_ratio
+        self.count = 0
+
+    def __call__(self, X, y=None, transform=None):
+        if y is not None:
+            #  Ratio changes gradually from dataset_ratio to 1
+            ratio = self.dataset_ratio * (self.max_epochs - self.count) + self.count / self.max_epochs
+            self.count += 1
+            p = np.zeros(len(y))
+            weights = (ratio, 1)
+            for i, weight in enumerate(weights):
+                p[y == i] = weight
+            indices = np.random.choice(np.arange(len(y)), size=len(y), replace=True,
+                                       p=np.array(p) / p.sum())
+            X = X[indices]
+            y = y[indices]
+        self.tf = transform
+        self.X, self.y = X, y
+        return self

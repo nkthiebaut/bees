@@ -139,9 +139,9 @@ def GetOptions():
     """ Retrieve options from standard input """
     p = argparse.ArgumentParser(description='Neural net. training',
                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    p.add_argument('network', metavar="network", type=str, default='VGG16',
+    p.add_argument('network', metavar="network", type=str, default='VGG11',
                    help='Network name (should be defined in the model zoo).')
-    p.add_argument('-b', '--batch-size', metavar="batch_size", type=int, default=48,
+    p.add_argument('-b', '--batch-size', metavar="batch_size", type=int, default=56,
                    help='Batch size')
     p.add_argument('--max-epochs', metavar="max_epochs", type=int, default=50,
                    help='Minimum distance value')
@@ -149,15 +149,19 @@ def GetOptions():
                    help='Number of color channels (3 for RGB)')
     p.add_argument('--crop-size', metavar="crop_size", type=int, default=200,
                    help='Pictures batch data augmentation crop size.')
+    p.add_argument('--train-file', metavar="train_file", type=str, default='train.npz',
+                   help='Training set file.')
+    p.add_argument('--test-file', metavar="test_file", type=str, default='test.npz',
+                   help='Test set file.')
     p.add_argument('-d', '--data-aug', metavar="data_aug_type", type=str, default='full',
                    help='Batch data augmentation type')
     p.add_argument('--activation', metavar="activation", type=str, default='rectify',
-                   help='Activation function (rectify, leaky_rectify, very_leaky_rectify')
+                   help='Activation function (rectify, leaky_rectify, very_leaky_rectify) ')
     p.add_argument('--learning_rate', metavar="learning_rate", type=float, default=0.01,
                    help='Initial learning rate of Nesterov momentum method')
     p.add_argument('--lambda2', metavar="lambda2", type=float, default=0.0005,
                    help='Lambda2 regularization term')
 
-    p.add_argument('--excited', action="store_true", dest="excited", help='')
+    #p.add_argument('--boolean', action="store_true", dest="boolean", help='')
     args = vars(p.parse_args())
     return args
