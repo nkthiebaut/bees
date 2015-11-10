@@ -109,8 +109,11 @@ class ResamplingBatchIterator(DataAugmentationBatchIterator):
     Adapted from https://github.com/sveitser/kaggle_diabetic/blob/master/iterator.py
     """
 
-    def __init__(self, batch_size, max_epochs, dataset_ratio):
-        super(ResamplingBatchIterator, self).__init__(batch_size)
+    def __init__(self, batch_size, max_epochs, dataset_ratio, crop_size=200, 
+                 pad_size=100, nb_channels=3, scale_delta=0.2, max_trans=5,
+                 angle_factor=1., shear=None):
+        super(ResamplingBatchIterator, self).__init__(batch_size, crop_size, pad_size, 
+nb_channels, scale_delta, max_trans, angle_factor, shear)
         self.max_epochs = max_epochs
         self.dataset_ratio = dataset_ratio
         self.count = 0

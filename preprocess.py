@@ -24,7 +24,10 @@ def prepare_data(name='', width=200, balanced=True):
     DM.save_to_lasagne_format(filename='test'+name+'.npz')
 
 if __name__ == '__main__':
+    prepare_data(balanced=False)
+"""
     prepare_data(name='_width_224_balanced', width=224, balanced=True)
     prepare_data(name='_width_224_unbalanced', width=224, balanced=False)
     prepare_data(name='_width_200_balanced', width=200, balanced=True)
     prepare_data(name='_width_200_unbalanced', width=200, balanced=False)
+"""

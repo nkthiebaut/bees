@@ -141,15 +141,15 @@ def GetOptions():
                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     p.add_argument('network', metavar="network", type=str, default='VGG16',
                    help='Network name (should be defined in the model zoo).')
-    p.add_argument('--batch_size', metavar="batch_size", type=int, default=48,
+    p.add_argument('-b', '--batch-size', metavar="batch_size", type=int, default=48,
                    help='Batch size')
-    p.add_argument('--max_epochs', metavar="max_epochs", type=int, default=50,
+    p.add_argument('--max-epochs', metavar="max_epochs", type=int, default=50,
                    help='Minimum distance value')
     p.add_argument('--channels', metavar="channel", type=int, default=3,
                    help='Number of color channels (3 for RGB)')
-    p.add_argument('--crop_size', metavar="crop_size", type=int, default=200,
+    p.add_argument('--crop-size', metavar="crop_size", type=int, default=200,
                    help='Pictures batch data augmentation crop size.')
-    p.add_argument('--data-aug', metavar="data_aug_type", type=str, default='full',
+    p.add_argument('-d', '--data-aug', metavar="data_aug_type", type=str, default='full',
                    help='Batch data augmentation type')
     p.add_argument('--activation', metavar="activation", type=str, default='rectify',
                    help='Activation function (rectify, leaky_rectify, very_leaky_rectify')

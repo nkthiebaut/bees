@@ -8,4 +8,5 @@
 + Normalize accross channels
 + Progressive unbalancing of batches (team_o_O)
 + Model votes, meta model
++ Make flip optional in DataAugmentationBatchIterator
  

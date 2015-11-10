@@ -95,6 +95,68 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
     ]
 
+    zoo['VGG11'] = [
+        (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+        (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+
+        (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+    ]
+
+
+    zoo['VGG13'] = [
+        (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+        (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+
+        (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+    ]
+
+
     zoo['VGG16'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
@@ -249,7 +311,7 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
     elif data_augmentation == 'full':
         batch_iterator_train = DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size)
     elif data_augmentation == 'resampling':
-        batch_iterator_train = ResamplingBatchIterator(batch_size=batch_size, crop_size=crop_size,
+        batch_iterator_train = ResamplingBatchIterator(batch_size=batch_size,
                                                        max_epochs=max_epochs, dataset_ratio=dataset_ratio)
     else:
         raise ValueError(data_augmentation+' is an unknown data augmentation strategy.')
