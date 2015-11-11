@@ -142,11 +142,12 @@ class ResamplingFlipBatchIterator(FlipBatchIterator):
     Adapted from https://github.com/sveitser/kaggle_diabetic/blob/master/iterator.py
     """
 
-    def __init__(self, batch_size, max_epochs, dataset_ratio):
+    def __init__(self, batch_size, max_epochs, dataset_ratio, final_ratio):
         super(ResamplingFlipBatchIterator, self).__init__(batch_size)
         self.max_epochs = max_epochs
         self.dataset_ratio = dataset_ratio
         self.count = 0
+        self.final_ratio
 
     def __call__(self, X, y=None, transform=None):
         if y is not None:
@@ -159,8 +160,10 @@ class ResamplingFlipBatchIterator(FlipBatchIterator):
                 p[y == i] = weight
             indices = np.random.choice(np.arange(len(y)), size=len(y), replace=True,
                                        p=np.array(p) / p.sum())
+
             X = X[indices]
             y = y[indices]
         self.tf = transform
         self.X, self.y = X, y
+        print np.unique(y, return_counts=True)[1]
         return self

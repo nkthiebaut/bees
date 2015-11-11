@@ -33,14 +33,18 @@ y = y[:sample_size]
 print "Train:"
 print "X.shape:", X.shape
 print "y.shape:", y.shape
-print "y value counts: ", np.unique(y, return_counts=True)
+y_counts = np.unique(y, return_counts=True)[1]
+print "y value counts: ", y_counts
+
+# Compute over-sampling of class 1
+dataset_ratio = int(y_counts[1]/y_counts[0])
 
 exp_name = args['network']
 
-conv_net = build_network(network_name=args['network'], data_augmentation=args['data_aug'], lambda2=args['lambda2'],
+conv_net = build_network(network_name=exp_name, data_augmentation=args['data_aug'], lambda2=args['lambda2'],
                          max_epochs=args['max_epochs'], nb_channels=args['channels'], crop_size=args['crop_size'],
                          init_learning_rate=args['learning_rate'], activation_function=activation_function,
-                         batch_size=args['batch_size'])
+                         batch_size=args['batch_size'], dataset_ratio=dataset_ratio)
 
 conv_net.fit(X, y)
 
