@@ -4,13 +4,15 @@
 __author__ = 'thiebaut'
 __date__ = '13/10/15'
 
-from nolearn.lasagne.base import BatchIterator
+import sys
 import numpy as np
 from math import pi
+
 from skimage.transform import SimilarityTransform
 from skimage.transform import AffineTransform
 from skimage.transform import warp
 from skimage.util import pad
+from nolearn.lasagne.base import BatchIterator
 
 
 class FlipBatchIterator(BatchIterator):
@@ -109,20 +111,23 @@ class ResamplingBatchIterator(DataAugmentationBatchIterator):
     Adapted from https://github.com/sveitser/kaggle_diabetic/blob/master/iterator.py
     """
 
-    def __init__(self, batch_size, max_epochs, dataset_ratio, crop_size=200, 
+    def __init__(self, batch_size, max_epochs, dataset_ratio, finale_ratio, crop_size=200, 
                  pad_size=100, nb_channels=3, scale_delta=0.2, max_trans=5,
-                 angle_factor=1., shear=None):
+                 angle_factor=1., shear=None, output=sys.stdout):
         super(ResamplingBatchIterator, self).__init__(batch_size, crop_size, pad_size, 
 nb_channels, scale_delta, max_trans, angle_factor, shear)
         self.max_epochs = max_epochs
         self.dataset_ratio = dataset_ratio
         self.count = 0
+        self.final_ratio = final_ratio
+	self.output=output
 
     def __call__(self, X, y=None, transform=None):
         if y is not None:
             #  Ratio changes gradually from dataset_ratio to 1
-            ratio = self.dataset_ratio * (self.max_epochs - self.count) + self.count / self.max_epochs
             self.count += 1
+            ratio = self.dataset_ratio * (self.max_epochs - self.count) + self.final_ratio * (self.count-1)
+	    ratio /= float(self.max_epochs-1)
             p = np.zeros(len(y))
             weights = (ratio, 1)
             for i, weight in enumerate(weights):
@@ -133,6 +138,7 @@ nb_channels, scale_delta, max_trans, angle_factor, shear)
             y = y[indices]
         self.tf = transform
         self.X, self.y = X, y
+        #print >> self.output, "Epoch "+str(self.count)+", labels counts: "+str(np.unique(y, return_counts=True)[1])
         return self
 
 
@@ -142,12 +148,13 @@ class ResamplingFlipBatchIterator(FlipBatchIterator):
     Adapted from https://github.com/sveitser/kaggle_diabetic/blob/master/iterator.py
     """
 
-    def __init__(self, batch_size, max_epochs, dataset_ratio, final_ratio):
+    def __init__(self, batch_size, max_epochs, dataset_ratio, final_ratio, output=sys.stdout):
         super(ResamplingFlipBatchIterator, self).__init__(batch_size)
         self.max_epochs = max_epochs
         self.dataset_ratio = dataset_ratio
         self.count = 0
         self.final_ratio = final_ratio
+	self.output=output
 
     def __call__(self, X, y=None, transform=None):
         if y is not None:
@@ -166,8 +173,5 @@ class ResamplingFlipBatchIterator(FlipBatchIterator):
             y = y[indices]
         self.tf = transform
         self.X, self.y = X, y
-	print ratio
-	print self.dataset_ratio
-	print self.count
-        print np.unique(y, return_counts=True)[1]
+        #print >> self.output, "Epoch "+str(self.count)+", labels counts: "+str(np.unique(y, return_counts=True)[1])
         return self

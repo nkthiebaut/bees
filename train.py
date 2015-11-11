@@ -37,8 +37,8 @@ y_counts = np.unique(y, return_counts=True)[1]
 print "y value counts: ", y_counts
 
 # Compute over-sampling of class 1
-dataset_ratio =  y_counts[1]/y_counts[0]
-print "Labels ratio:", dataset_ratio
+dataset_ratio =  float(y_counts[1])/y_counts[0]
+print "Labels ratio: {:.2f}".format(dataset_ratio)
 
 exp_name = args['network']
 
