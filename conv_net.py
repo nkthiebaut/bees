@@ -61,7 +61,7 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
     zoo = {}
 
-    zoo['layers_test'] = [
+    zoo['test'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
         (Conv2DLayer, {'num_filters': 16, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
@@ -298,7 +298,7 @@ def auc_roc(y_true, y_prob):
 
 
 def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_epochs=50, nb_channels=3, crop_size=200,
-                  activation_function=rectify, batch_size=48, init_learning_rate=0.01, dataset_ratio=3.8):
+                  activation_function=rectify, batch_size=48, init_learning_rate=0.01, dataset_ratio=3.8, final_ratio=2.):
     """Build nolearn neural network and returns it
 
     :param network: pre-defined network name
@@ -316,7 +316,7 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
                                                        max_epochs=max_epochs, dataset_ratio=dataset_ratio)
     elif data_augmentation == 'resampling-flip':
         batch_iterator_train = ResamplingFlipBatchIterator(batch_size=batch_size,
-                                                       max_epochs=max_epochs, dataset_ratio=dataset_ratio)
+                                                       max_epochs=max_epochs, dataset_ratio=dataset_ratio, final_ratio=final_ratio)
     else:
         raise ValueError(data_augmentation+' is an unknown data augmentation strategy.')
 

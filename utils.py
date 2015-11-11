@@ -155,6 +155,8 @@ def GetOptions():
                    help='Test set file.')
     p.add_argument('-d', '--data-aug', metavar="data_aug_type", type=str, default='full',
                    help='Batch data augmentation type')
+    p.add_argument('-f', '--final-ratio', metavar="final_ratio", type=float, default=2.,
+                   help='Batch over sampling final ratio (only relevant for resampling data-aug)')
     p.add_argument('--activation', metavar="activation", type=str, default='rectify',
                    help='Activation function (rectify, leaky_rectify, very_leaky_rectify) ')
     p.add_argument('--learning_rate', metavar="learning_rate", type=float, default=0.01,

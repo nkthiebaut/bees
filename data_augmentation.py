@@ -147,13 +147,14 @@ class ResamplingFlipBatchIterator(FlipBatchIterator):
         self.max_epochs = max_epochs
         self.dataset_ratio = dataset_ratio
         self.count = 0
-        self.final_ratio
+        self.final_ratio = final_ratio
 
     def __call__(self, X, y=None, transform=None):
         if y is not None:
             #  Ratio changes gradually from dataset_ratio to 1
-            ratio = self.dataset_ratio * (self.max_epochs - self.count) + self.count / self.max_epochs
             self.count += 1
+            ratio = self.dataset_ratio * (self.max_epochs - self.count) + self.final_ratio * (self.count-1)
+	    ratio /= float(self.max_epochs-1)
             p = np.zeros(len(y))
             weights = (ratio, 1)
             for i, weight in enumerate(weights):
@@ -165,5 +166,8 @@ class ResamplingFlipBatchIterator(FlipBatchIterator):
             y = y[indices]
         self.tf = transform
         self.X, self.y = X, y
+	print ratio
+	print self.dataset_ratio
+	print self.count
         print np.unique(y, return_counts=True)[1]
         return self
