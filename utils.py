@@ -163,6 +163,8 @@ def GetOptions():
                    help='Initial learning rate of Nesterov momentum method')
     p.add_argument('--lambda2', metavar="lambda2", type=float, default=0.0005,
                    help='Lambda2 regularization term')
+    p.add_argument('-l','--load', metavar="load", type=str, default=None,
+                   help='Model to load (leave blank for none)')
 
     #p.add_argument('--boolean', action="store_true", dest="boolean", help='')
     args = vars(p.parse_args())

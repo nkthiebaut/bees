@@ -24,7 +24,7 @@ elif args['activation'] == 'very_leaky_rectify':
 else:
     raise ValueError('Unknown activation function')
 
-print args
+print "Training parameters: ", args
 X, y, images_id = load_numpy_arrays(args['train_file'])
 sample_size = y.shape[0] - y.shape[0] % args['batch_size']
 X = X[:sample_size]
@@ -45,7 +45,13 @@ exp_name = args['network']
 conv_net = build_network(network_name=exp_name, data_augmentation=args['data_aug'], lambda2=args['lambda2'],
                          max_epochs=args['max_epochs'], nb_channels=args['channels'], crop_size=args['crop_size'],
                          init_learning_rate=args['learning_rate'], activation_function=activation_function,
-                         batch_size=args['batch_size'], dataset_ratio=dataset_ratio, final_ratio=args['final_ratio'])
+                         batch_size=args['batch_size'], dataset_ratio=dataset_ratio, final_ratio=args['final_ratio'], 
+verbose=True)
+
+if args['load']:
+    with open(args['load'], 'rb') as f:
+        loaded_net = cPickle.load(f)
+    conv_net.load_params_from(loaded_net)
 
 conv_net.fit(X, y)
 

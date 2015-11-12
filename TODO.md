@@ -1,12 +1,16 @@
 
-+ Data Augmentation: try various settings (no rotations?)
+Important:
++ Implement model loading
++ Meta model:
+    + Use predictions from several models (AlexNet, VGG, SVM)
+    + Add images meta informations (image variance) 
+
+Less important:
++ Try zero regularization and smaller fully connected layers
 + Network :  
     + Try drop-out at every level
     + Leaky rectifiers vs standard ReLU
     + Fix slowness when stride is not zero
-+ Pre-trained networks
-+ Normalize accross channels
-+ Progressive unbalancing of batches (team_o_O)
-+ Model votes, meta model
++ Use re-trained networks
++ Normalize accross channels instead of per channel
 + Make flip optional in DataAugmentationBatchIterator
- 
