@@ -313,7 +313,7 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
         batch_iterator_train = DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size)
     elif data_augmentation == 'resampling':
         batch_iterator_train = ResamplingBatchIterator(batch_size=batch_size,
-                                                       max_epochs=max_epochs, dataset_ratio=dataset_ratio)
+                                                       max_epochs=max_epochs, dataset_ratio=dataset_ratio, final_ratio=final_ratio)
     elif data_augmentation == 'resampling-flip':
         batch_iterator_train = ResamplingFlipBatchIterator(batch_size=batch_size,
                                                        max_epochs=max_epochs, dataset_ratio=dataset_ratio, final_ratio=final_ratio)
