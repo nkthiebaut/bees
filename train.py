@@ -58,13 +58,13 @@ conv_net.fit(X, y)
 name = exp_name + '_'+ str(date.today())
 with open('models/conv_net_'+name+'.pkl', 'wb') as f:
     cPickle.dump(conv_net, f, -1)
-conv_net.save_params_to('params_'+name)
+conv_net.save_params_to('models/params_'+name)
 
 # ----- Train set ----
 train_predictions = conv_net.predict_proba(X)
 make_submission_file(train_predictions[:sample_size], images_id[:sample_size],
-                     output_filepath='submissions/training_'+name+'.csv')
-plot_loss(conv_net, "submissions/loss_"+name+".png", show=False)
+                     output_filepath='models/training_'+name+'.csv')
+plot_loss(conv_net, "models/loss_"+name+".png", show=False)
 
 # ----- Test set ----
 X_test, _, images_id_test = load_numpy_arrays(args['test_file'])
