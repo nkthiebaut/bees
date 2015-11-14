@@ -105,27 +105,27 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (Conv2DLayer, {'num_filters': 16, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 32, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
         (Conv2DLayer, {'num_filters': 384, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 384, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
 
         (DropoutLayer, {}),
