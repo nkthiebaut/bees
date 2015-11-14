@@ -44,7 +44,8 @@ exp_name = args['network']
 
 conv_net = build_network(network_name=exp_name, data_augmentation=args['data_aug'], lambda2=args['lambda2'],
                          max_epochs=args['max_epochs'], nb_channels=args['channels'], crop_size=args['crop_size'],
-                         init_learning_rate=args['learning_rate'], activation_function=activation_function,
+                         init_learning_rate=args['learning_init'], final_learning_rate=args['learning_final'],
+ activation_function=activation_function,
                          batch_size=args['batch_size'], dataset_ratio=dataset_ratio, final_ratio=args['final_ratio'], 
 verbose=True)
 

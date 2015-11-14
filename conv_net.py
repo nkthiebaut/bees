@@ -29,6 +29,7 @@ from utils import plot_loss
 from lasagne.layers import DenseLayer
 from lasagne.layers import InputLayer
 from lasagne.layers import DropoutLayer
+from lasagne.layers import FeaturePoolLayer
 from lasagne.layers import Conv2DLayer
 from lasagne.layers import MaxPool2DLayer
 #from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
@@ -124,6 +125,77 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
     ]
+
+    zoo['VGG11-dropout'] = [
+        (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+        (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DropoutLayer, {}),
+
+        (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+    ]
+
+
+    zoo['VGG11-Maxout'] = [
+        (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+        (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 128, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+        (DropoutLayer, {'p': 0.5}),
+        (FeaturePoolLayer, {'ds': 2}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+        (DropoutLayer, {'p': 0.5}),
+        (FeaturePoolLayer, {'ds': 2}),
+
+        (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+    ]
+
+
 
 
     zoo['VGG13'] = [
@@ -298,7 +370,7 @@ def auc_roc(y_true, y_prob):
 
 
 def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_epochs=50, nb_channels=3, crop_size=200,
-                  activation_function=rectify, batch_size=48, init_learning_rate=0.01, dataset_ratio=3.8, final_ratio=2., verbose=True):
+                  activation_function=rectify, batch_size=48, init_learning_rate=0.01, final_learning_rate=0.0001, dataset_ratio=3.8, final_ratio=2., verbose=True):
     """Build nolearn neural network and returns it
 
     :param network: pre-defined network name
@@ -330,7 +402,7 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
         update_learning_rate=theano.shared(float32(init_learning_rate)),
         update_momentum=theano.shared(float32(0.9)),
         on_epoch_finished=[
-            AdjustVariable('update_learning_rate', start=init_learning_rate, stop=0.0001),
+            AdjustVariable('update_learning_rate', start=init_learning_rate, stop=final_learning_rate),
             AdjustVariable('update_momentum', start=0.9, stop=0.999),
             EarlyStopping(patience=5),
             ],

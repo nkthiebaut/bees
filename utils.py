@@ -159,8 +159,10 @@ def GetOptions():
                    help='Batch over sampling final ratio (only relevant for resampling data-aug)')
     p.add_argument('--activation', metavar="activation", type=str, default='rectify',
                    help='Activation function (rectify, leaky_rectify, very_leaky_rectify) ')
-    p.add_argument('--learning_rate', metavar="learning_rate", type=float, default=0.01,
+    p.add_argument('--learning-init', metavar="learning_init", type=float, default=0.01,
                    help='Initial learning rate of Nesterov momentum method')
+    p.add_argument('--learning-final', metavar="learning_final", type=float, default=0.0001,
+                   help='Final learning rate of Nesterov momentum method')
     p.add_argument('--lambda2', metavar="lambda2", type=float, default=0.0005,
                    help='Lambda2 regularization term')
     p.add_argument('-l','--load', metavar="load", type=str, default=None,
