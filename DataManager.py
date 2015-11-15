@@ -59,15 +59,18 @@ class DataManager(object):
         print "Feature_matrix shape: {}".format(self.X.shape)
 
     def per_channel_mean(self, filename='data/mean.csv'):
-        out = np.zeros((self.n_images, 5))
+        out = np.zeros((self.n_images, 9))
         for i in tqdm(xrange(self.n_images)):
             pic = self.X[i].reshape(self.width, self.width, self.n_channels)
             out[i, 0] = self.images_id[i]
             out[i, 1] = self.X[i].mean()
             for j in xrange(self.n_channels):
                 out[i, j+2] = pic[:, :, j].mean()
-        print out.shape
-        df = pd.DataFrame(out, columns=['id', 'global_mean', 'mean_0', 'mean_1', 'm:an_2'])
+            out[i, 5] = self.X[i].std()
+            for j in xrange(self.n_channels):
+                out[i, j+6] = pic[:, :, j].std()
+        df = pd.DataFrame(out,
+                          columns=['id', 'global_mean', 'mean_0', 'mean_1', 'mean_2', 'std', 'std_0', 'std_1', 'std_2'])
         df.to_csv(filename)
         return df
 
