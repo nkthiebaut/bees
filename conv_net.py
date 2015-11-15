@@ -30,11 +30,11 @@ from lasagne.layers import DenseLayer
 from lasagne.layers import InputLayer
 from lasagne.layers import DropoutLayer
 from lasagne.layers import FeaturePoolLayer
-import lasagne.layers.dnn
-Conv2DLayer = lasagne.layers.dnn.Conv2DDNNLayer
-MaxPool2DLayer = lasagne.layers.dnn.MaxPool2DDNNLayer 
-#from lasagne.layers import Conv2DLayer
-#from lasagne.layers import MaxPool2DLayer
+#import lasagne.layers.dnn
+#Conv2DLayer = lasagne.layers.dnn.Conv2DDNNLayer
+#MaxPool2DLayer = lasagne.layers.dnn.MaxPool2DDNNLayer 
+from lasagne.layers import Conv2DLayer
+from lasagne.layers import MaxPool2DLayer
 #from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
 #from lasagne.layers.cuda_convnet import MaxPool2DCCLayer as MaxPool2DLayer
 from lasagne.nonlinearities import softmax

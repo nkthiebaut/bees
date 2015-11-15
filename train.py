@@ -67,7 +67,7 @@ train_predictions = conv_net.predict_proba(X)
 make_submission_file(train_predictions[:sample_size], images_id[:sample_size],
                      output_filepath='models/training_'+name+'.csv')
 plot_loss(conv_net, "models/loss_"+name+".png", show=False)
-plot_conv_weights(conv_net.layers_[1], "model/weights_"+name+".png")
+#plot_conv_weights(conv_net.layers_[1], "model/weights_"+name+".png")
 
 # ----- Test set ----
 X_test, _, images_id_test = load_numpy_arrays(args['test_file'])
