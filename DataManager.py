@@ -58,6 +58,38 @@ class DataManager(object):
             self.X[i, :] = features
         print "Feature_matrix shape: {}".format(self.X.shape)
 
+    def per_channel_mean(self, filename='data/mean.csv'):
+        out = np.zeros((self.n_images, 9))
+        for i in tqdm(xrange(self.n_images)):
+            pic = self.X[i].reshape(self.width, self.width, self.n_channels)
+            out[i, 0] = self.images_id[i]
+            out[i, 1] = self.X[i].mean()
+            for j in xrange(self.n_channels):
+                out[i, j+2] = pic[:, :, j].mean()
+            out[i, 5] = self.X[i].std()
+            for j in xrange(self.n_channels):
+                out[i, j+6] = pic[:, :, j].std()
+        df = pd.DataFrame(out,
+                          columns=['id', 'global_mean', 'mean_0', 'mean_1', 'mean_2', 'std', 'std_0', 'std_1', 'std_2'])
+        df.to_csv(filename)
+        return df
+
+
+
+        for i, img_id in tqdm(enumerate(self.images_id)):
+            features = get_image(self.path, img_id, width=self.width).reshape(200,200,3)
+            if self.X is None:
+                self.n_features = features.shape[0]
+                self.X = np.zeros((self.n_images, self.n_features),
+                                  dtype=np.uint8)
+
+            if not features.shape[0] == self.n_features:
+                print "Error on image {}".format(img_id)
+
+            self.X[i, :] = features
+        print "Feature_matrix shape: {}".format(self.X.shape)
+
+
     def shuffle(self):
         """ Shuffle the features, labels and ids"""
         print "{} shuffles.".format(type(self).__name__)

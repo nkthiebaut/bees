@@ -124,6 +124,7 @@ def plot_conv_weights(layer, filename, figsize=(6, 6)):
                               interpolation='nearest')
     plt.savefig(filename)
 
+
 def data_augmentation_test(img_id=1, crop_size=200, pad_size=100):
     Xb = np.array(Image.open('data/images/train/' + str(img_id) + '.jpg'), dtype=np.uint8) / np.float32(255.)
 
@@ -158,6 +159,32 @@ def data_augmentation_test(img_id=1, crop_size=200, pad_size=100):
     print "Finally, cuts and shape: ", lower_cut, upper_cut, padded.shape
     plt.imshow(tmp)
 
+
+def get_errors(labels_file='data/train_labels.csv', predictions_file='models/training.csv'):
+    labels = pd.read_csv(labels_file)
+    predictions = pd.read_csv(predictions_file)
+    error = pd.merge(labels, predictions, on=['id'])
+    error['error'] = abs(error['genus_x'] - error['genus_y'])
+    error = error.sort(columns='error')
+
+from sklearn.metrics import roc_curve, auc
+
+def plot_roc(y_true_file, y_pred_file, filename='ROC.png'):
+    df = pd.merge(pd.read_csv(y_true_file), pd.read_csv(y_pred_file), on=['id'])
+    y_true = df['genus_x'].values
+    y_pred = df['genus_y'].values
+    fpr, tpr, _ = roc_curve(y_true, y_pred)
+    roc_auc = auc(fpr, tpr)
+    plt.figure()
+    plt.plot(fpr, tpr, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic example')
+    plt.legend(loc="lower right")
+    plt.show()
 
 import argparse
 
