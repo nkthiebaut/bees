@@ -9,6 +9,7 @@ import numpy as np
 from datetime import date
 
 from lasagne.nonlinearities import rectify, leaky_rectify, very_leaky_rectify
+from utils import plot_conv_weights
 
 from utils import GetOptions, plot_loss, make_submission_file, load_numpy_arrays
 from conv_net import build_network
@@ -47,7 +48,7 @@ conv_net = build_network(network_name=exp_name, data_augmentation=args['data_aug
                          init_learning_rate=args['learning_init'], final_learning_rate=args['learning_final'],
  activation_function=activation_function,
                          batch_size=args['batch_size'], dataset_ratio=dataset_ratio, final_ratio=args['final_ratio'], 
-verbose=True)
+verbose=False)
 
 if args['load']:
     with open(args['load'], 'rb') as f:
@@ -66,6 +67,7 @@ train_predictions = conv_net.predict_proba(X)
 make_submission_file(train_predictions[:sample_size], images_id[:sample_size],
                      output_filepath='models/training_'+name+'.csv')
 plot_loss(conv_net, "models/loss_"+name+".png", show=False)
+plot_conv_weights(conv_net.layers_[1], "model/weights_"+name+".png")
 
 # ----- Test set ----
 X_test, _, images_id_test = load_numpy_arrays(args['test_file'])

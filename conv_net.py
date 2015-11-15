@@ -30,8 +30,11 @@ from lasagne.layers import DenseLayer
 from lasagne.layers import InputLayer
 from lasagne.layers import DropoutLayer
 from lasagne.layers import FeaturePoolLayer
-from lasagne.layers import Conv2DLayer
-from lasagne.layers import MaxPool2DLayer
+import lasagne.layers.dnn
+Conv2DLayer = lasagne.layers.dnn.Conv2DDNNLayer
+MaxPool2DLayer = lasagne.layers.dnn.MaxPool2DDNNLayer 
+#from lasagne.layers import Conv2DLayer
+#from lasagne.layers import MaxPool2DLayer
 #from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
 #from lasagne.layers.cuda_convnet import MaxPool2DCCLayer as MaxPool2DLayer
 from lasagne.nonlinearities import softmax
@@ -98,13 +101,13 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
     ]
 
 
-    zoo['reformed_gamblers'] = [
+    zoo['reformed-gamblers'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
         (Conv2DLayer, {'num_filters': 16, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 16, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 32, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-        (Conv2DLayer, {'num_filters': 32, 'filter_size': (1, 1), 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 32, 'filter_size': (1, 1), 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
@@ -117,10 +120,6 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
-        (Conv2DLayer, {'num_filters': 384, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
-        (Conv2DLayer, {'num_filters': 384, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
@@ -203,7 +202,7 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
     ]
 
 
-    zoo['VGG11-Maxout'] = [
+    zoo['VGG11-maxout'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
@@ -224,12 +223,12 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
         (DropoutLayer, {'p': 0.5}),
-        (FeaturePoolLayer, {'ds': 2}),
         (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+        (FeaturePoolLayer, {'pool_size': 2}),
         (DropoutLayer, {'p': 0.5}),
-        (FeaturePoolLayer, {'ds': 2}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+        (FeaturePoolLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
     ]
@@ -272,6 +271,7 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
     zoo['VGG16'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
+        (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
@@ -366,10 +366,11 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (Conv2DLayer, {'num_filters': 512, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': (2, 2)}),
 
-        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
         (DropoutLayer, {}),
         (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
+        (FeaturePoolLayer, {'pool_size': 2}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+        (FeaturePoolLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
     ]
@@ -396,9 +397,10 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
     ]
 
     try:
-        layers = zoo[name]
+       layers = zoo[name]
     except KeyError:
         print(name+' not found in available model zoo.')
+	exit(1)
 
     return layers
 
@@ -408,7 +410,7 @@ def auc_roc(y_true, y_prob):
 
 
 def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_epochs=50, nb_channels=3, crop_size=200,
-                  activation_function=rectify, batch_size=48, init_learning_rate=0.01, final_learning_rate=0.0001, dataset_ratio=3.8, final_ratio=2., verbose=True):
+                  activation_function=rectify, batch_size=48, init_learning_rate=0.01, final_learning_rate=0.0001, dataset_ratio=3.8, final_ratio=2., verbose=False):
     """Build nolearn neural network and returns it
 
     :param network: pre-defined network name

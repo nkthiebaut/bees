@@ -97,6 +97,33 @@ def plot_loss(net, filename="submissions/loss_" + str(date.today()) + ".png", sh
         plt.show()
 
 
+def plot_conv_weights(layer, filename, figsize=(6, 6)):
+    """Plot the weights of a specific layer.
+    Only really makes sense with convolutional layers.
+    Parameters
+    ----------
+    layer : lasagne.layers.Layer
+    """
+    W = layer.W.get_value()
+    shape = W.shape
+    nrows = np.ceil(np.sqrt(shape[0])).astype(int)
+    ncols = nrows
+
+    for feature_map in range(shape[1]):
+        figs, axes = plt.subplots(nrows, ncols, figsize=figsize)
+
+        for ax in axes.flatten():
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.axis('off')
+
+        for i, (r, c) in enumerate(product(range(nrows), range(ncols))):
+            if i >= shape[0]:
+                break
+            axes[r, c].imshow(W[i, feature_map], cmap='gray',
+                              interpolation='nearest')
+    plt.savefig(filename)
+
 def data_augmentation_test(img_id=1, crop_size=200, pad_size=100):
     Xb = np.array(Image.open('data/images/train/' + str(img_id) + '.jpg'), dtype=np.uint8) / np.float32(255.)
 
