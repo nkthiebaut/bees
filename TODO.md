@@ -1,6 +1,5 @@
 
 Important:
-+ Implement model loading
 + Meta model:
     + Use predictions from several models (AlexNet, VGG, SVM)
     + Add images meta informations (image variance) 
