@@ -28,13 +28,13 @@ def prepare_data(name='', width=200, balanced=True):
     DM.shuffle()
     DM.normalize()
     if width > 200:
-        DM.pad(224)
+        DM.pad(width)
     DM.save_to_lasagne_format(filename='train'+name+'.npz')
 
     DM = DataManager(test=True)
     DM.normalize()
     if width > 200:
-        DM.pad(224)
+        DM.pad(width)
     DM.save_to_lasagne_format(filename='test'+name+'.npz')
 
 if __name__ == '__main__':

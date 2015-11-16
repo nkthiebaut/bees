@@ -7,6 +7,7 @@ __date__ = '07/11/15'
 import cPickle
 import numpy as np
 from datetime import date
+from math import sqrt
 
 from lasagne.nonlinearities import rectify, leaky_rectify, very_leaky_rectify
 from utils import plot_conv_weights
@@ -36,6 +37,7 @@ print "X.shape:", X.shape
 print "y.shape:", y.shape
 y_counts = np.unique(y, return_counts=True)[1]
 print "y value counts: ", y_counts
+print "pictures size: ", sqrt(X.shape[1]/3.)
 
 # Compute over-sampling of class 1
 dataset_ratio =  float(y_counts[1])/y_counts[0]

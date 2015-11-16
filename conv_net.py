@@ -378,10 +378,10 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
     zoo['AlexNet'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
-        (Conv2DLayer, {'num_filters': 48, 'filter_size': (11, 11), 'stride': 4, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 48, 'filter_size': 11, 'stride': 4, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': (3, 3), 'stride': 2}),
 
-        (Conv2DLayer, {'num_filters': 128, 'filter_size': (5, 5), 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 128, 'filter_size': (5, 5), 'pad': 2, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': (3, 3), 'stride': 2}),
 
         (Conv2DLayer, {'num_filters': 192, 'filter_size': (3, 3), 'pad': 1, 'nonlinearity':activation_function}),
@@ -424,10 +424,10 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
     elif data_augmentation == 'full':
         batch_iterator_train = DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size)
     elif data_augmentation == 'resampling':
-        batch_iterator_train = ResamplingBatchIterator(batch_size=batch_size,
+        batch_iterator_train = ResamplingBatchIterator(batch_size=batch_size, crop_size=crop_size,
                                                        max_epochs=max_epochs, dataset_ratio=dataset_ratio, final_ratio=final_ratio)
     elif data_augmentation == 'resampling-flip':
-        batch_iterator_train = ResamplingFlipBatchIterator(batch_size=batch_size,
+        batch_iterator_train = ResamplingFlipBatchIterator(batch_size=batch_size, crop_size=crop_size,
                                                        max_epochs=max_epochs, dataset_ratio=dataset_ratio, final_ratio=final_ratio)
     else:
         raise ValueError(data_augmentation+' is an unknown data augmentation strategy.')
