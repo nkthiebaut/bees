@@ -5,6 +5,7 @@ __author__ = 'thiebaut'
 __date__ = '13/10/15'
 
 import sys
+import random
 import numpy as np
 from math import pi
 
@@ -88,10 +89,11 @@ class DataAugmentationBatchIterator(BatchIterator):
             padded = np.swapaxes(padded, 0, 2)
 
             #  Pick random values
-            scaling_factor = 2 * np.random.random() * self.scale_delta + (1. - self.scale_delta)
+            scaling_factor_tmp = 2 * np.random.random() * self.scale_delta + (1. - self.scale_delta)
+            scaling_factor = random.choice([1./scaling_factor_tmp, 1., scaling_factor_tmp])
             angle = 2 * pi * (np.random.random() - 0.5) * self.angle_factor
-            trans_x = np.random.randint(-self.max_trans, self.max_trans)
-            trans_y = np.random.randint(-self.max_trans, self.max_trans)
+            trans_x = 0 # np.random.randint(-self.max_trans, self.max_trans)
+            trans_y = 0 # np.random.randint(-self.max_trans, self.max_trans)
 
             # Apply similarity transform to zoom, rotate and translate
             tf = SimilarityTransform(scale=scaling_factor, rotation=angle, translation=(trans_x, trans_y))
