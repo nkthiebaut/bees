@@ -454,7 +454,7 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
         objective_lambda2=lambda2,
 
         train_split=TrainSplit(eval_size=0.1, stratify=True),
-        custom_score=('AUC-ROC', auc_roc),
+     #   custom_score=('AUC-ROC', auc_roc),
         max_epochs=max_epochs,
         verbose=3,
         )
