@@ -3,7 +3,7 @@ Driven data bees classifier competition codes [http://www.drivendata.org/competi
 
 ## Competition description
 All pictures are 200x200, RGB, with two classes: Bumble bee or honey bee.
-* Train set: 3969 pictures (3142 class 1, 827 class 0)
+* Train set: 3969 pictures (3142 class 1, 827 class 0) (divisors: 1, 3, 7, 9, 21, 27, 49, 63, 81, 147, ...)
 * Test set: 992 pictures
 
 
