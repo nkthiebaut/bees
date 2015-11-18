@@ -26,12 +26,13 @@ def compute_auc_roc_and_accuracy(df):
     df = pd.merge(df, y, on=['id'])
     y_pred = np.array(df['genus_x'], dtype=np.float64)
     y_true = np.array(df['genus_y'], dtype=np.float64)
-    print "Model AUC-ROC: ", roc_auc_score(y_true, y_pred)
+    print "\nModel AUC-ROC: ", roc_auc_score(y_true, y_pred)
     y_bis = []
     for pred in y_pred:
         p = 1. if pred >= 0.5 else 0.
         y_bis.append(p)
     print "Model accuracy: ", accuracy_score(y_true, y_bis)
+
 
 def make_submission_file(predictions, output_filepath="submission_" + str(date.today()) + ".csv"):
     test_labels = 'SubmissionFormat.csv'
@@ -41,26 +42,27 @@ def make_submission_file(predictions, output_filepath="submission_" + str(date.t
     predictions_df.index.names = ['id']
     predictions_df.to_csv(output_filepath)
 
-model_a = 'models/training_VGG11_2015-11-13.csv'
-model_b = 'models/training_VGG11-maxout_2015-11-17.csv'
+model_files = ['models/training_VGG11_2015-11-13.csv',
+               'models/training_VGG11-maxout_2015-11-17.csv',
+               'models/training_MyNet_2015-11-17.csv']
 
-compute_auc_roc_and_accuracy(model_a)
-compute_auc_roc_and_accuracy(model_b)
+for m in model_files:
+    compute_auc_roc_and_accuracy(m)
 
-df = pd.read_csv(model_a)
-df_right = pd.read_csv(model_b)
-
-predictions = average_models(df, df_right)
-
+dfs = map(pd.read_csv, model_files)
+predictions = reduce(average_models, dfs)
 compute_auc_roc_and_accuracy(predictions)
 
 # ------------ Make prediction ---------------------
-test_a = 'submissions/submission_VGG11_2015-11-13.csv'
-test_b = 'submissions/submission_VGG11-maxout_2015-11-17.csv'
-df = pd.read_csv(test_a)
-df_right = pd.read_csv(test_b)
-predictions = average_models(df, df_right)
+test_files = ['submissions/submission_VGG11_2015-11-13.csv',
+              'submissions/submission_VGG11-maxout_2015-11-17.csv',
+              'submissions/submission_MyNet_2015-11-17.csv']
+
+dfs = map(pd.read_csv, test_files)
+predictions = reduce(average_models, dfs)
+#predictions = average_models(predictions, df_ter)
 
 outfile = 'submissions/avg_submission_' + str(date.today()) +'.csv'
-make_submission_file(predictions['genus'], output_filepath=outfile)
+predictions.to_csv(outfile, index=False)
+
 
