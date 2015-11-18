@@ -69,7 +69,7 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
         (Conv2DLayer, {'num_filters': 16, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 16}),
 
@@ -86,12 +86,12 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (Conv2DLayer, {'num_filters': 32, 'filter_size': 3, 'pad': 1}),
         (Conv2DLayer, {'num_filters': 32, 'filter_size': 3, 'pad': 1}),
         (Conv2DLayer, {'num_filters': 32, 'filter_size': 3, 'pad': 1}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 64}),
         (DropoutLayer, {}),
@@ -108,23 +108,23 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (Conv2DLayer, {'num_filters': 16, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 32, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 32, 'filter_size': (1, 1), 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
 
         (DropoutLayer, {}),
@@ -139,22 +139,22 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
         (DropoutLayer, {}),
@@ -163,65 +163,27 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
     ]
-
-    zoo['VGG11-dropout'] = [
-        (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
-
-        (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
-        (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
-        (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-        (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
-
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
-        (DropoutLayer, {}),
-
-        (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
-    ]
-
 
     zoo['VGG11-maxout'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (DropoutLayer, {'p': 0.5}),
         (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
@@ -239,26 +201,26 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
         (Conv2DLayer, {'num_filters': 48, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 48, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 96, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 96, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 96, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 192, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 192, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 192, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (DropoutLayer, {'p': 0.5}),
         (DenseLayer, {'num_units': 512, 'nonlinearity':activation_function}),
@@ -276,23 +238,23 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
         (DropoutLayer, {}),
@@ -307,23 +269,23 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (DropoutLayer, {}),
         (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
@@ -336,36 +298,38 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
     ]
 
 
-    zoo['VGG16'] = [
+    zoo['VGG16-maxout'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
         (DropoutLayer, {}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+        (FeaturePoolLayer, {'pool_size': 2}),
         (DropoutLayer, {}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+        (FeaturePoolLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
     ]
@@ -375,29 +339,29 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
         (DropoutLayer, {}),
@@ -413,26 +377,26 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
         (Conv2DLayer, {'num_filters': 32, 'filter_size': 5, 'stride': 2, 'pad': 2, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 32, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 5, 'stride': 2, 'pad': 2, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': (2, 2)}),
+        (MaxPool2DLayer, {'pool_size': 2}),
 
         (DropoutLayer, {}),
         (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
@@ -495,7 +459,7 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
         batch_iterator_train = ResamplingBatchIterator(batch_size=batch_size, crop_size=crop_size,
                                                        max_epochs=max_epochs, dataset_ratio=dataset_ratio, final_ratio=final_ratio)
     elif data_augmentation == 'resampling-flip':
-        batch_iterator_train = ResamplingFlipBatchIterator(batch_size=batch_size, crop_size=crop_size,
+        batch_iterator_train = ResamplingFlipBatchIterator(batch_size=batch_size,
                                                        max_epochs=max_epochs, dataset_ratio=dataset_ratio, final_ratio=final_ratio)
     else:
         raise ValueError(data_augmentation+' is an unknown data augmentation strategy.')

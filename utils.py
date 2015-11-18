@@ -196,7 +196,7 @@ def GetOptions():
     p.add_argument('network', metavar="network", type=str, default='VGG11',
                    help='Network name (should be defined in the model zoo).')
     p.add_argument('-b', '--batch-size', metavar="batch_size", type=int, default=56,
-                   help='Batch size')
+                   help='Batch size (27, 49, 63, 81, 147, ...) for no throw-away')
     p.add_argument('--max-epochs', metavar="max_epochs", type=int, default=50,
                    help='Minimum distance value')
     p.add_argument('--channels', metavar="channel", type=int, default=3,

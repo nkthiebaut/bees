@@ -29,7 +29,7 @@ class FlipBatchIterator(BatchIterator):
 
 
 class DataAugmentationBatchIterator(BatchIterator):
-    def __init__(self, batch_size, crop_size=200, pad_size=100, nb_channels=3, scale_delta=0.2, max_trans=5,
+    def __init__(self, batch_size, crop_size=200, pad_size=100, nb_channels=3, scale_delta=0.2, max_trans=10,
                  angle_factor=1., shear=None):
         """
         Transforms pictures randomly at each batch iteration with horizontal flips, rotations, translations, zooms
@@ -92,8 +92,8 @@ class DataAugmentationBatchIterator(BatchIterator):
             scaling_factor_tmp = 2 * np.random.random() * self.scale_delta + (1. - self.scale_delta)
             scaling_factor = random.choice([1./scaling_factor_tmp, 1., scaling_factor_tmp])
             angle = 2 * pi * (np.random.random() - 0.5) * self.angle_factor
-            trans_x = 0 # np.random.randint(-self.max_trans, self.max_trans)
-            trans_y = 0 # np.random.randint(-self.max_trans, self.max_trans)
+            trans_x = np.random.randint(-self.max_trans, self.max_trans)
+            trans_y = np.random.randint(-self.max_trans, self.max_trans)
 
             # Apply similarity transform to zoom, rotate and translate
             tf = SimilarityTransform(scale=scaling_factor, rotation=angle, translation=(trans_x, trans_y))
