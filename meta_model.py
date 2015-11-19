@@ -22,7 +22,6 @@ from utils import make_submission_file
 __author__ = 'thiebaut'
 __date__ = '16/11/15'
 
-
 train_files = ['models/training_VGG11_2015-11-13.csv',
                'models/training_VGG11-maxout_2015-11-15.csv',
                'data/train_meta_infos.csv']
@@ -31,19 +30,9 @@ test_files = ['submissions/submission_VGG11_2015-11-13.csv',
               'submissions/submission_VGG11-maxout_2015-11-15.csv',
               'data/test_meta_infos.csv']
 
-
-def average_models(model_file_a, model_file_b):
-    df = pd.read_csv(model_file_a)
-    df_right = pd.read_csv(model_file_b)
-    df = pd.merge(df, df_right, how='inner', on=['id'])
-    df['genus'] = (df['genus_x']+df['genus_y'])/2.
-    df = df.drop(['genus_x', 'genus_y'], axis=1)
-    return df
-
-
 def merge_csv(files):
-    df = average_models(files[0], files[1])
-    for f in files[2:]:
+    df = pd.read_csv(files[0])
+    for f in files[1:]:
         df_right = pd.read_csv(f)
         df = pd.merge(df, df_right, how='inner', on=['id'])
     return df
@@ -91,7 +80,7 @@ print 'Classifier AUC-ROC (test):', roc_auc_score(y_test, y_pred[:, 1])
 #predictions = clf.feature_importances_
 #print predictions
 
-
+exit()
 test_labels = 'SubmissionFormat.csv'
 y_test = pd.read_csv("data/" + test_labels, index_col=0)
 images_id_test = np.array(y_test.index.tolist())
@@ -102,5 +91,5 @@ predictions = clf.predict_proba(X_test)
 name = '_' + str(date.today())
 make_submission_file(predictions, images_id_test, output_filepath='submissions/meta_submission'+name+'.csv')
 predictions_df = pd.DataFrame(predictions[:, 1], index=images_id, columns=['genus'])
-    predictions_df.index.names = ['id']
-    predictions_df.to_csv(output_filepath)
+predictions_df.index.names = ['id']
+predictions_df.to_csv(output_filepath)
