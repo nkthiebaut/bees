@@ -26,17 +26,31 @@ from utils import load_numpy_arrays
 from utils import float32
 from utils import plot_loss
 
+import lasagne
 from lasagne.layers import DenseLayer
 from lasagne.layers import InputLayer
 from lasagne.layers import DropoutLayer
 from lasagne.layers import FeaturePoolLayer
-import lasagne.layers.dnn
-Conv2DLayer = lasagne.layers.dnn.Conv2DDNNLayer
-MaxPool2DLayer = lasagne.layers.dnn.MaxPool2DDNNLayer 
-#from lasagne.layers import Conv2DLayer
-#from lasagne.layers import MaxPool2DLayer
-#from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
-#from lasagne.layers.cuda_convnet import MaxPool2DCCLayer as MaxPool2DLayer
+try:
+    import lasagne.layers.dnn
+    Conv2DLayer = lasagne.layers.dnn.Conv2DDNNLayer
+    MaxPool2DLayer = lasagne.layers.dnn.MaxPool2DDNNLayer 
+    Pool2DLayer = lasagne.layers.dnn.Pool2DDNNLayer
+    print("using CUDNN backend")
+except ImportError:
+    print("failed to load CUDNN backend")
+    try:
+        import lasagne.layers.cuda_convnet
+        Conv2DLayer = lasagne.layers.cuda_convnet.Conv2DCCLayer
+        Pool2DLayer = lasagne.layers.cuda_convnet.Pool2DLayer
+        MaxPool2DLayer = lasagne.layers.cuda_convnet.MaxPool2DCCLayer
+        print("using CUDAConvNet backend")
+    except ImportError as exc:
+        print("failed to load CUDAConvNet backend")
+        Conv2DLayer = lasagne.layers.conv.Conv2DLayer
+        MaxPool2DLayer = lasagne.layers.pool.MaxPool2DLayer
+        Pool2DLayer = MaxPool2DLayer
+        print("using CPU backend")
 from lasagne.nonlinearities import softmax
 from lasagne.nonlinearities import LeakyRectify
 from lasagne.nonlinearities import rectify
@@ -476,7 +490,7 @@ def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_ep
         on_epoch_finished=[
             AdjustVariable('update_learning_rate', start=init_learning_rate, stop=final_learning_rate),
             AdjustVariable('update_momentum', start=0.9, stop=0.999),
-            EarlyStopping(patience=5),
+            EarlyStopping(patience=10),
             ],
 
         batch_iterator_train = batch_iterator_train,
