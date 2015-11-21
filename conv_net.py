@@ -452,7 +452,10 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
 
 
 def auc_roc(y_true, y_prob):
-    return roc_auc_score(y_true, y_prob[:,1])
+    try:
+        return roc_auc_score(y_true, y_prob[:,1])
+    except ValueError:
+        return 0.
 
 
 def build_network(network_name, data_augmentation='full', lambda2=0.0005, max_epochs=50, nb_channels=3, crop_size=200,
