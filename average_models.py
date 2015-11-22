@@ -42,7 +42,7 @@ def make_submission_file(predictions, output_filepath="submission_" + str(date.t
     predictions_df.to_csv(output_filepath)
 
 model_files = ['models/training_VGG11_2015-11-13.csv',
-               'models/training_VGG11-maxout_2015-11-17.csv',
+               'models/training_AlexNet_2015-11-20.csv',
                'models/training_VGG11-maxout_2015-11-15.csv']
 
 for m in model_files:
@@ -52,9 +52,9 @@ dfs = map(pd.read_csv, model_files)
 predictions = reduce(average_models, dfs)
 compute_auc_roc_and_accuracy(predictions)
 
-# ------------ Make prediction ---------------------
+# ------------ Make prediction ---------------------
 test_files = ['submissions/submission_VGG11_2015-11-13.csv',
-              'submissions/submission_VGG11-maxout_2015-11-17.csv',
+              'submissions/submission_AlexNet_2015-11-20.csv',
               'submissions/submission_VGG11-maxout_2015-11-15.csv']
 
 dfs = map(pd.read_csv, test_files)
