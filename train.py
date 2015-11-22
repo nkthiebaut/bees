@@ -27,7 +27,6 @@ else:
     raise ValueError('Unknown activation function')
 args['activation_function'] = activation_function
 
-print "Training parameters: ", args
 X, y, images_id = load_numpy_arrays(args['train_file'])
 sample_size = y.shape[0] - y.shape[0] % args['batch_size']
 X = X[:sample_size]
@@ -47,7 +46,7 @@ args['dataset_ratio'] = dataset_ratio
 
 exp_name = args['network']
 
-print "input arguments:", args
+print "Input arguments:", args
 conv_net = build_network(**args)
 """network_name=exp_name, data_augmentation=args['data_aug'], lambda2=args['lambda2'],
                          max_epochs=args['max_epochs'], nb_channels=args['channels'], crop_size=args['crop_size'],

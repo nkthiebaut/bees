@@ -115,7 +115,7 @@ class ResamplingBatchIterator(DataAugmentationBatchIterator):
 
     def __init__(self, batch_size, max_epochs, dataset_ratio, final_ratio, crop_size=200, 
                  pad_size=100, nb_channels=3, scale_delta=0.2, max_trans=5,
-                 angle_factor=1., shear=None, output=sys.stdout):
+                 angle_factor=1., shear=None, output=sys.stdout, verbose=True):
         super(ResamplingBatchIterator, self).__init__(batch_size, crop_size, pad_size, 
 nb_channels, scale_delta, max_trans, angle_factor, shear)
         self.max_epochs = max_epochs
@@ -123,6 +123,8 @@ nb_channels, scale_delta, max_trans, angle_factor, shear)
         self.count = 0
         self.final_ratio = final_ratio
 	self.output=output
+        if verbose:
+            print 'Resampling batch iterator parameters:', self.__dict__
 
     def __call__(self, X, y=None, transform=None):
         if y is not None:
