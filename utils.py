@@ -191,15 +191,17 @@ import argparse
 
 def GetOptions():
     """ Retrieve options from standard input """
-    p = argparse.ArgumentParser(description='Neural net. training',
+    parser = argparse.ArgumentParser(description='Neural net. training',
                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    p = parser.add_argument_group('General')
     p.add_argument('network', metavar="network", type=str, default='VGG11',
                    help='Network name (should be defined in the model zoo).')
-    p.add_argument('-b', '--batch-size', metavar="batch_size", type=int, default=56,
+    p.add_argument('-b', '--batch-size', metavar="batch_size", type=int, default=49,
                    help='Batch size (27, 49, 63, 81, 147, ...) for no throw-away')
-    p.add_argument('--max-epochs', metavar="max_epochs", type=int, default=50,
+    p.add_argument('-m', '--max-epochs', metavar="max_epochs", type=int, default=100,
                    help='Minimum distance value')
-    p.add_argument('--channels', metavar="channel", type=int, default=3,
+    p.add_argument('--nb-channels', metavar="nb_channels", type=int, default=3,
                    help='Number of color channels (3 for RGB)')
     p.add_argument('--crop-size', metavar="crop_size", type=int, default=200,
                    help='Pictures batch data augmentation crop size.')
@@ -207,21 +209,29 @@ def GetOptions():
                    help='Training set file.')
     p.add_argument('--test-file', metavar="test_file", type=str, default='test.npz',
                    help='Test set file.')
-    p.add_argument('-d', '--data-aug', metavar="data_aug_type", type=str, default='full',
-                   help='Batch data augmentation type')
-    p.add_argument('-f', '--final-ratio', metavar="final_ratio", type=float, default=2.,
-                   help='Batch over sampling final ratio (only relevant for resampling data-aug)')
     p.add_argument('--activation', metavar="activation", type=str, default='rectify',
                    help='Activation function (rectify, leaky_rectify, very_leaky_rectify) ')
     p.add_argument('--learning-init', metavar="learning_init", type=float, default=0.01,
                    help='Initial learning rate of Nesterov momentum method')
     p.add_argument('--learning-final', metavar="learning_final", type=float, default=0.0001,
                    help='Final learning rate of Nesterov momentum method')
+    p.add_argument('-p', '--patience', metavar="patience", type=int, default=5,
+                   help='Early stopping patience')
     p.add_argument('--lambda2', metavar="lambda2", type=float, default=0.0005,
                    help='Lambda2 regularization term')
     p.add_argument('-l','--load', metavar="load", type=str, default=None,
                    help='Model to load (leave blank for none)')
 
-    #p.add_argument('--boolean', action="store_true", dest="boolean", help='')
-    args = vars(p.parse_args())
-    return args
+    aug = parser.add_argument_group('Data augmentation')
+    aug.add_argument('-d', '--data-augmentation', metavar="data_augmentation", type=str, default='resampling',
+                   help='Batch data augmentation type')
+    aug.add_argument('-t', '--max-trans', metavar="max_trans", type=int, default=5,
+                   help='Maximum translation in number of pixels')
+    aug.add_argument('-z', '--scale-delta', metavar="scale_delta", type=float, default=0.1,
+                   help='Max./Min. zooming factor (e.g. 0.1 for 0.9 -> 1.1 rescaling)')
+    aug.add_argument('-a', '--angle-factor', metavar="angle_factor", type=float, default=1.,
+                   help='Rotation factor (0 for no rotation and 1 for 360 degrees rotations)')
+    aug.add_argument('-f', '--final-ratio', metavar="final_ratio", type=float, default=2.,
+                   help='Batch over sampling final ratio (only relevant for resampling data-aug)')
+
+    return vars(parser.parse_args())

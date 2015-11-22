@@ -25,6 +25,7 @@ elif args['activation'] == 'very_leaky_rectify':
     activation_function = very_leaky_rectify
 else:
     raise ValueError('Unknown activation function')
+args['activation_function'] = activation_function
 
 print "Training parameters: ", args
 X, y, images_id = load_numpy_arrays(args['train_file'])
@@ -42,15 +43,20 @@ print "pictures size: ", sqrt(X.shape[1]/3.)
 # Compute over-sampling of class 1
 dataset_ratio =  float(y_counts[1])/y_counts[0]
 print "Labels ratio: {:.2f}".format(dataset_ratio)
+args['dataset_ratio'] = dataset_ratio
 
 exp_name = args['network']
 
-conv_net = build_network(network_name=exp_name, data_augmentation=args['data_aug'], lambda2=args['lambda2'],
+print "input arguments:", args
+conv_net = build_network(**args)
+"""network_name=exp_name, data_augmentation=args['data_aug'], lambda2=args['lambda2'],
                          max_epochs=args['max_epochs'], nb_channels=args['channels'], crop_size=args['crop_size'],
                          init_learning_rate=args['learning_init'], final_learning_rate=args['learning_final'],
  activation_function=activation_function,
                          batch_size=args['batch_size'], dataset_ratio=dataset_ratio, final_ratio=args['final_ratio'], 
+patience=args['patience']
 verbose=False)
+"""
 
 if args['load']:
     with open(args['load'], 'rb') as f:
