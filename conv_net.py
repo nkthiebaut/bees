@@ -385,6 +385,45 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
     ]
 
+    zoo['VGG19-maxout'] = [
+        (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
+
+        (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': 2}),
+
+        (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': 2}),
+
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': 2}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': 2}),
+
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': 2}),
+
+        (DropoutLayer, {}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+        (FeaturePoolLayer, {'pool_size': 2}),
+        (DropoutLayer, {}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
+        (FeaturePoolLayer, {'pool_size': 2}),
+
+        (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
+    ]
+
 
     zoo['team_oO'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
