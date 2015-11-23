@@ -457,7 +457,6 @@ def auc_roc(y_true, y_prob):
     except ValueError:
         return 0.
 
-
 def build_network(verbose=False, **kwargs):
 #network_name, data_augmentation='full', lambda2=0.0005, max_epochs=50, nb_channels=3, crop_size=200,
                   #activation_function=rectify, batch_size=48, init_learning_rate=0.01, final_learning_rate=0.0001, dataset_ratio=3.8, final_ratio=2., verbose=False):
