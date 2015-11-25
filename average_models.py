@@ -11,6 +11,14 @@ __author__ = 'thiebaut'
 __date__ = '16/11/15'
 
 
+models = ['VGG11_2015-11-23', 'AlexNet_2015-11-22', 'VGG13-maxout_2015-11-23',
+          'VGG11-maxout_2015-11-23', 'VGG13_2015-11-23',
+          'reformed-gamblers_2015-11-23']
+
+model_files = ['models/training_'+m+'.csv' for m in models]
+test_files = ['submissions/submission_'+m+'.csv' for m in models]
+
+
 def average_models(df, df_right):
     df = pd.merge(df, df_right, how='inner', on=['id'])
     df['genus'] = (df['genus_x']+df['genus_y'])/2.
@@ -18,7 +26,8 @@ def average_models(df, df_right):
     return df
 
 
-def compute_auc_roc_and_accuracy(df, labels_file='data/train_labels.csv', label_name='genus'):
+def compute_auc_roc_and_accuracy(df, labels_file='data/train_labels.csv',
+                                 label_name='genus'):
     if not isinstance(df, pd.DataFrame):
         df = pd.read_csv(df)
     y = pd.read_csv(labels_file)
@@ -32,33 +41,19 @@ def compute_auc_roc_and_accuracy(df, labels_file='data/train_labels.csv', label_
     print "\nModel accuracy={:.5f}".format(accuracy_score(y_true, y_pred))
     print "\t AUC-ROC={:.5f}".format(roc_auc_score(y_true, y_proba))
 
-
-def make_submission_file(predictions, output_filepath="submission_" + str(date.today()) + ".csv",
-                         test_labels='SubmissionFormat.csv'):
-    y_test = pd.read_csv("data/" + test_labels, index_col=0)
-    images_id_test = np.array(y_test.index.tolist())
-    predictions_df = pd.DataFrame(predictions, index=images_id_test, columns=['genus'])
-    predictions_df.index.names = ['id']
-    predictions_df.to_csv(output_filepath)
-
-model_files = ['models/training_VGG11_2015-11-13.csv',
-               'models/training_AlexNet_2015-11-20.csv',
-               'models/training_VGG11-maxout_2015-11-15.csv']
-
+# ------ Compute average performances on training set -------
 for m in model_files:
     compute_auc_roc_and_accuracy(m)
 
 dfs = map(pd.read_csv, model_files)
 predictions = reduce(average_models, dfs)
+outfile= 'train.csv'
+predictions.to_csv(outfile, index=False)
 compute_auc_roc_and_accuracy(predictions)
 
-# ------------ Make prediction ---------------------
-test_files = ['submissions/submission_VGG11_2015-11-13.csv',
-              'submissions/submission_AlexNet_2015-11-20.csv',
-              'submissions/submission_VGG11-maxout_2015-11-15.csv']
-
+# ------------------ Make prediction --------------------------
 dfs = map(pd.read_csv, test_files)
 predictions = reduce(average_models, dfs)
 
-outfile = 'submissions/avg_submission_' + str(date.today()) +'.csv'
+outfile = 'submissions/avg_submission_' + str(date.today()) + '.csv'
 predictions.to_csv(outfile, index=False)

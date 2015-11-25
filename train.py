@@ -1,19 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__author__ = 'thiebaut'
-__date__ = '07/11/15'
-
 import cPickle
 import numpy as np
 from datetime import date
 from math import sqrt
+import matplotlib.pyplot as plt
 
 from lasagne.nonlinearities import rectify, leaky_rectify, very_leaky_rectify
-from utils import plot_conv_weights
+from nolearn.lasagne.visualize import plot_conv_weights
+from nolearn.lasagne.visualize import plot_conv_activity
+from nolearn.lasagne.visualize import plot_occlusion
 
-from utils import GetOptions, plot_loss, make_submission_file, load_numpy_arrays
 from conv_net import build_network
+from utils import GetOptions
+from utils import plot_loss
+from utils import make_submission_file
+from utils import load_numpy_arrays
+
+__author__ = 'thiebaut'
+__date__ = '07/11/15'
 
 args = GetOptions()
 
@@ -40,7 +46,7 @@ print "y value counts: ", y_counts
 print "pictures size: ", sqrt(X.shape[1]/3.)
 
 # Compute over-sampling of class 1
-dataset_ratio =  float(y_counts[1])/y_counts[0]
+dataset_ratio = float(y_counts[1])/y_counts[0]
 print "Labels ratio: {:.2f}".format(dataset_ratio)
 args['dataset_ratio'] = dataset_ratio
 
@@ -48,14 +54,7 @@ exp_name = args['network']
 
 print "Input arguments:", args
 conv_net = build_network(**args)
-"""network_name=exp_name, data_augmentation=args['data_aug'], lambda2=args['lambda2'],
-                         max_epochs=args['max_epochs'], nb_channels=args['channels'], crop_size=args['crop_size'],
-                         init_learning_rate=args['learning_init'], final_learning_rate=args['learning_final'],
- activation_function=activation_function,
-                         batch_size=args['batch_size'], dataset_ratio=dataset_ratio, final_ratio=args['final_ratio'], 
-patience=args['patience']
-verbose=False)
-"""
+
 
 if args['load']:
     with open(args['load'], 'rb') as f:
@@ -64,21 +63,32 @@ if args['load']:
 
 conv_net.fit(X, y)
 
-name = exp_name + '_'+ str(date.today())
+name = exp_name + '_' + str(date.today())
 with open('models/conv_net_'+name+'.pkl', 'wb') as f:
     cPickle.dump(conv_net, f, -1)
 conv_net.save_params_to('models/params_'+name)
 
-# ----- Train set ----
+# ----- Train set ----
 train_predictions = conv_net.predict_proba(X)
 make_submission_file(train_predictions[:sample_size], images_id[:sample_size],
                      output_filepath='models/training_'+name+'.csv')
-plot_loss(conv_net, "models/loss_"+name+".png", show=False)
-#plot_conv_weights(conv_net.layers_[1], "model/weights_"+name+".png")
 
-# ----- Test set ----
+# ----- Test set ----
 X_test, _, images_id_test = load_numpy_arrays(args['test_file'])
 print "Test:"
 print "X_test.shape:", X_test.shape
 predictions = conv_net.predict_proba(X_test)
-make_submission_file(predictions, images_id_test, output_filepath='submissions/submission_'+name+'.csv')
+make_submission_file(predictions, images_id_test,
+                     output_filepath='submissions/submission_'+name+'.csv')
+
+# ----- Make plots ----
+plot_loss(conv_net, "models/loss_"+name+".png", show=False)
+
+plot_conv_weights(conv_net.layers_[1], figsize=(4, 4))
+plt.savefig('models/weights_'+name+'.png')
+
+plot_conv_activity(conv_net.layers_[1], X[0:1])
+plt.savefig('models/activity_'+name+'.png')
+
+plot_occlusion(conv_net, X[:5], y[:5])
+plt.savefig('models/occlusion_'+name+'.png')
