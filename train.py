@@ -5,6 +5,8 @@ import cPickle
 import numpy as np
 from datetime import date
 from math import sqrt
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from lasagne.nonlinearities import rectify, leaky_rectify, very_leaky_rectify

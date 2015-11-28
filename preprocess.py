@@ -4,6 +4,8 @@
 __author__ = 'thiebaut'
 __date__ = '09/10/15'
 
+import matplotlib
+matplotlib.use('Agg')
 from DataManager import DataManager
 
 import argparse
