@@ -4,3 +4,5 @@
 *.jpg
 params_*
 src/
+.idea*
+.ipy*
