@@ -11,11 +11,18 @@ __author__ = 'thiebaut'
 __date__ = '16/11/15'
 
 
-models = ['VGG11_2015-11-23', 'VGG11-maxout_2015-11-23',
-          'VGG13_2015-11-23', 'VGG13-maxout_2015-11-23',
-          'AlexNet_2015-11-22',#, 'reformed-gamblers_2015-11-23',
-          'VGG11-maxout_2015-11-28', 'VGG13-maxout_2015-11-28',
-          'MyNet_2015-11-27'] #, 'AlexNet_2015-11-27']
+models = [#'VGG11-maxout_2015-11-23',
+          'VGG11_2015-11-23',
+          'VGG13_2015-11-23',
+          'VGG13-maxout_2015-11-23',
+          'AlexNet_2015-11-22',
+          'reformed-gamblers_2015-11-23',
+          'VGG11-maxout_2015-11-28_pretrain',
+          #'VGG13-maxout_2015-11-28_pretrain',
+          #'MyNet_2015-11-27',
+          #'AlexNet_2015-11-27',
+          #'VGG11_2015-11-28',
+          ]
 
 model_files = ['models/training_'+m+'.csv' for m in models]
 test_files = ['submissions/submission_'+m+'.csv' for m in models]
