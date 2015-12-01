@@ -1,0 +1,48 @@
+using CUDNN backend
+Train:
+X.shape: (3936, 3, 200, 200)
+y.shape: (3936,)
+y value counts:  [ 822 3114]
+pictures size:  1.0
+Labels ratio: 3.79
+Input arguments: {'load': None, 'scale_delta': 0.1, 'test_file': 'test.npz', 'network': 'VGG13-maxout', 'data_augmentation': 'resampling', 'final_ratio': 1.5, 'activation_function': <function rectify at 0x7fcedcf56cf8>, 'train_file': 'train.npz', 'activation': 'rectify', 'max_trans': 5, 'batch_size': 48, 'dataset_ratio': 3.7883211678832116, 'patience': 10, 'angle_factor': 1.0, 'learning_init': 0.005, 'learning_final': 0.0001, 'max_epochs': 200, 'initial_ratio': None, 'nb_channels': 3, 'lambda2': 0.001, 'crop_size': 200}
+Resampling batch iterator parameters: {'count': 0, 'final_ratio': 1.5, 'nb_channels': 3, 'pad_size': 100, 'scale_delta': 0.1, 'output': <open file '<stdout>', mode 'w' at 0x7fcf14634150>, 'dataset_ratio': 3.7883211678832116, 'batch_size': 48, 'angle_factor': 1.0, 'max_epochs': 200, 'max_trans': 5, 'shear': None, 'crop_size': 200}
+# Neural Network with 28806722 learnable parameters
+
+## Layer information
+
+name            size           total    cap.Y    cap.X    cov.Y    cov.X    filter Y    filter X    field Y    field X
+--------------  -----------  -------  -------  -------  -------  -------  ----------  ----------  ---------  ---------
+input0          3x200x200     120000   100.00   100.00   100.00   100.00         200         200        200        200
+conv2ddnn1      64x200x200   2560000   100.00   100.00     1.50     1.50           3           3          3          3
+conv2ddnn2      64x200x200   2560000    60.00    60.00     2.50     2.50           3           3          5          5
+maxpool2ddnn3   64x100x100    640000    60.00    60.00     2.50     2.50           3           3          5          5
+conv2ddnn4      128x100x100  1280000    66.67    66.67     4.50     4.50           6           6          9          9
+conv2ddnn5      128x100x100  1280000    46.15    46.15     6.50     6.50           6           6         13         13
+maxpool2ddnn6   128x50x50     320000    46.15    46.15     6.50     6.50           6           6         13         13
+conv2ddnn7      256x50x50     640000    57.14    57.14    10.50    10.50          12          12         21         21
+conv2ddnn8      256x50x50     640000    41.38    41.38    14.50    14.50          12          12         29         29
+maxpool2ddnn9   256x25x25     160000    41.38    41.38    14.50    14.50          12          12         29         29
+conv2ddnn10     512x25x25     320000    53.33    53.33    22.50    22.50          24          24         45         45
+conv2ddnn11     512x25x25     320000    39.34    39.34    30.50    30.50          24          24         61         61
+maxpool2ddnn12  512x12x12      73728    39.34    39.34    30.50    30.50          24          24         61         61
+conv2ddnn13     512x12x12      73728    51.61    51.61    46.50    46.50          48          48         93         93
+conv2ddnn14     512x12x12      73728    38.40    38.40    62.50    62.50          48          48        125        125
+maxpool2ddnn15  512x6x6        18432    38.40    38.40    62.50    62.50          48          48        125        125
+dropout16       512x6x6        18432   100.00   100.00   100.00   100.00         200         200        200        200
+dense17         1024            1024   100.00   100.00   100.00   100.00         200         200        200        200
+featurepool18   512              512   100.00   100.00   100.00   100.00         200         200        200        200
+dropout19       512              512   100.00   100.00   100.00   100.00         200         200        200        200
+dense20         1024            1024   100.00   100.00   100.00   100.00         200         200        200        200
+featurepool21   512              512   100.00   100.00   100.00   100.00         200         200        200        200
+dense22         2                  2   100.00   100.00   100.00   100.00         200         200        200        200
+
+Explanation
+    X, Y:    image dimensions
+    cap.:    learning capacity
+    cov.:    coverage of image
+    [35mmagenta[0m: capacity too low (<1/6)
+    [36mcyan[0m:    image coverage too high (>100%)
+    [31mred[0m:     capacity too low and coverage too high
+
+

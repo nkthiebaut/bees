@@ -161,41 +161,6 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': 2}),
 
-        (DropoutLayer, {'p': 0.5}),
-        (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': 2}),
-
-        (DropoutLayer, {'p': 0.5}),
-        (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': 2}),
-
-        (DropoutLayer, {'p': 0.5}),
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': 2}),
-
-        (DropoutLayer, {'p': 0.5}),
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': 2}),
-
-        (DropoutLayer, {'p': 0.5}),
-        (DenseLayer, {'num_units': 1024, 'nonlinearity': linear}),
-        (FeaturePoolLayer, {'pool_size': 2}),
-        (DropoutLayer, {'p': 0.5}),
-        (DenseLayer, {'num_units': 1024, 'nonlinearity': linear}),
-        (FeaturePoolLayer, {'pool_size': 2}),
-
-        (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
-    ]
-
-    zoo['VGG11-full-maxout'] = [
-        (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
-
-        (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': 2}),
-
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': 2}),
 
@@ -212,15 +177,14 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (MaxPool2DLayer, {'pool_size': 2}),
 
         (DropoutLayer, {'p': 0.5}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity': linear}),
-        (FeaturePoolLayer, {'pool_size': 4}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity': linear}),
+        (FeaturePoolLayer, {'pool_size': 2}),
         (DropoutLayer, {'p': 0.5}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity': linear}),
-        (FeaturePoolLayer, {'pool_size': 4}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity': linear}),
+        (FeaturePoolLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
     ]
-
 
     zoo['MyNet'] = [
         (InputLayer, {'shape': (None, nb_channels, crop_size, crop_size)}),
@@ -244,10 +208,10 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (MaxPool2DLayer, {'pool_size': 2}),
 
         (DropoutLayer, {'p': 0.5}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
         (FeaturePoolLayer, {'pool_size': 2}),
         (DropoutLayer, {'p': 0.5}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity':activation_function}),
         (FeaturePoolLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
@@ -309,10 +273,10 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (MaxPool2DLayer, {'pool_size': 2}),
 
         (DropoutLayer, {}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity': linear}),
         (FeaturePoolLayer, {'pool_size': 2}),
         (DropoutLayer, {}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity': linear}),
         (FeaturePoolLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),

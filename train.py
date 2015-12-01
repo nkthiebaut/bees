@@ -50,7 +50,11 @@ print "pictures size: ", sqrt(X.shape[1]/3.)
 # Compute over-sampling of class 1
 dataset_ratio = float(y_counts[1])/y_counts[0]
 print "Labels ratio: {:.2f}".format(dataset_ratio)
-args['dataset_ratio'] = dataset_ratio
+if args['initial_ratio'] is None:
+    args['dataset_ratio'] = dataset_ratio
+else:
+    args['dataset_ratio'] = args['initial_ratio']
+
 
 exp_name = args['network']
 

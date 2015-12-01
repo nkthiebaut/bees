@@ -221,5 +221,10 @@ def GetOptions():
                      default=2.,
                      help='Batch over sampling final ratio ' +
                      '(only relevant for resampling data-aug)')
+    aug.add_argument('-i', '--initial-ratio', metavar="initial_ratio", type=float,
+                     default=None,
+                     help='Batch over sampling initial ratio ' +
+                     '(only relevant for resampling data-aug)')
+
 
     return vars(parser.parse_args())
