@@ -55,6 +55,7 @@ except ImportError:
 from lasagne.nonlinearities import softmax
 from lasagne.nonlinearities import LeakyRectify
 from lasagne.nonlinearities import rectify
+from lasagne.nonlinearities import linear
 
 from adaptative_learning import AdjustVariable
 from adaptative_learning import EarlyStopping
@@ -160,26 +161,30 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (Conv2DLayer, {'num_filters': 64, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': 2}),
 
+        (DropoutLayer, {'p': 0.5}),
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': 2}),
 
+        (DropoutLayer, {'p': 0.5}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 256, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': 2}),
 
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
-        (MaxPool2DLayer, {'pool_size': 2}),
-
+        (DropoutLayer, {'p': 0.5}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': 2}),
 
         (DropoutLayer, {'p': 0.5}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
+        (MaxPool2DLayer, {'pool_size': 2}),
+
+        (DropoutLayer, {'p': 0.5}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity': linear}),
         (FeaturePoolLayer, {'pool_size': 2}),
         (DropoutLayer, {'p': 0.5}),
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
+        (DenseLayer, {'num_units': 1024, 'nonlinearity': linear}),
         (FeaturePoolLayer, {'pool_size': 2}),
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
@@ -571,7 +576,7 @@ def build_network(verbose=False, **kwargs):
         on_epoch_finished=[
             AdjustVariable('update_learning_rate', start=learning_init, stop=learning_final),
             AdjustVariable('update_momentum', start=0.9, stop=0.999),
-            EarlyStopping(patience=10),
+            EarlyStopping(patience=patience),
             ],
 
         batch_iterator_train = batch_iterator_train,

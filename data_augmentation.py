@@ -78,7 +78,7 @@ class DataAugmentationBatchIterator(BatchIterator):
         # Necessary shifts to allow rotation around center
         tf_shift = SimilarityTransform(translation=[-shift_x, -shift_y])
         tf_shift_inv = SimilarityTransform(translation=[shift_x, shift_y])
-	Xb_new = np.zeros((bs,self.crop_size,self.crop_size,self.nb_channels))
+#	Xb_new = np.zeros((bs,self.crop_size,self.crop_size,self.nb_channels))
 
         for i in xrange(bs):
             pic = Xb[i]  # Picture as a [width, height, nb_channels] np.array
@@ -101,11 +101,11 @@ class DataAugmentationBatchIterator(BatchIterator):
             padded = warp(padded, (tf_shift + (tf + tf_shift_inv)).inverse)
 
             # Crop to desired size
-            Xb_new[i] = padded[lower_cut:upper_cut, lower_cut:upper_cut, :]
+            Xb[i] = padded[lower_cut:upper_cut, lower_cut:upper_cut, :]
 
-        Xb_new = np.swapaxes(Xb, 1, 3)
-        Xb_new *= np.float32(255.)
-        return Xb_new, yb
+        Xb = np.swapaxes(Xb, 1, 3)
+        Xb *= np.float32(255.)
+        return Xb, yb
 
 
 class ResamplingBatchIterator(DataAugmentationBatchIterator):
