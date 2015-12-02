@@ -47,7 +47,7 @@ def build_vgg_cnn_s(size):
 
 
 # !wget https://s3.amazonaws.com/lasagne/recipes/pretrained/imagenet/vgg16.pkl
-def build_vgg_16(size):
+def build_vgg_16(size=224):
     net = {}
     net['input'] = InputLayer((None, 3, size, size))
     net['conv1_1'] = ConvLayer(net['input'], 64, 3, pad=1)

@@ -14,7 +14,7 @@ from nolearn.lasagne.visualize import plot_conv_weights
 from nolearn.lasagne.visualize import plot_conv_activity
 from nolearn.lasagne.visualize import plot_occlusion
 
-from conv_net import build_network
+from conv_net import build_network, build_pretrained_network
 from utils import GetOptions
 from utils import plot_loss
 from utils import make_submission_file
@@ -59,7 +59,8 @@ else:
 exp_name = args['network']
 
 print "Input arguments:", args
-conv_net = build_network(**args)
+#conv_net = build_network(**args)
+conv_net = build_pretrained_network(**args)
 
 
 if args['load']:

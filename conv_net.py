@@ -557,3 +557,62 @@ def build_network(verbose=False, **kwargs):
     if verbose:
         print conv_net.__dict__
     return conv_net
+
+
+
+from pretrained_models import build_vgg_16
+def build_pretrained_network(verbose=False, **kwargs):
+#network_name, data_augmentation='full', lambda2=0.0005, max_epochs=50, nb_channels=3, crop_size=200,
+                  #activation_function=rectify, batch_size=48, init_learning_rate=0.01, final_learning_rate=0.0001, dataset_ratio=3.8, final_ratio=2., verbose=False):
+    """Build nolearn neural network and returns it
+
+    :param network: pre-defined network name
+    :param data_augmentation: type of batch data aug. ('no', 'flip' or 'full')
+    :return: NeuralNet nolearn object
+    """
+    for key,val in kwargs.items():
+        exec(key + '=val')
+    #data_augmentation = kwargs['data_augmentation']
+    if data_augmentation == 'no':
+        batch_iterator_train = BatchIterator(batch_size=batch_size)
+    elif data_augmentation == 'flip':
+        batch_iterator_train = FlipBatchIterator(batch_size=batch_size)
+    elif data_augmentation == 'full':
+        batch_iterator_train = DataAugmentationBatchIterator(batch_size=batch_size, crop_size=crop_size)
+    elif data_augmentation == 'resampling':
+        batch_iterator_train = ResamplingBatchIterator(batch_size=batch_size, crop_size=crop_size, scale_delta=scale_delta, max_trans=max_trans, angle_factor=angle_factor,
+                                                       max_epochs=max_epochs, dataset_ratio=dataset_ratio, final_ratio=final_ratio)
+    elif data_augmentation == 'resampling-flip':
+        batch_iterator_train = ResamplingFlipBatchIterator(batch_size=batch_size,
+                                                       max_epochs=max_epochs, dataset_ratio=dataset_ratio, final_ratio=final_ratio)
+    else:
+        raise ValueError(data_augmentation+' is an unknown data augmentation strategy.')
+
+    layers = build_vgg_16(crop_size)
+
+    conv_net = NeuralNet(
+        layers,
+
+        update=nesterov_momentum,
+        update_learning_rate=theano.shared(float32(learning_init)),
+        update_momentum=theano.shared(float32(0.9)),
+        on_epoch_finished=[
+            AdjustVariable('update_learning_rate', start=learning_init, stop=learning_final),
+            AdjustVariable('update_momentum', start=0.9, stop=0.999),
+            EarlyStopping(patience=patience),
+            ],
+
+        batch_iterator_train = batch_iterator_train,
+        # batch_iterator_test=DataAugmentationBatchIterator(batch_size=31, crop_size=crop_size),
+
+        objective=regularization_objective,
+        objective_lambda2=lambda2,
+
+        train_split=TrainSplit(eval_size=0.1, stratify=True),
+        custom_score=('AUC-ROC', auc_roc),
+        max_epochs=max_epochs,
+        verbose=3,
+        )
+    if verbose:
+        print conv_net.__dict__
+    return conv_net
