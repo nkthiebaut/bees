@@ -147,10 +147,10 @@ def build_layers(name='VGG16', nb_channels=3, crop_size=200, activation_function
         (Conv2DLayer, {'num_filters': 512, 'filter_size': 3, 'pad': 1, 'nonlinearity':activation_function}),
         (MaxPool2DLayer, {'pool_size': 2}),
 
-        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
         (DropoutLayer, {}),
         (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
         (DropoutLayer, {}),
+        (DenseLayer, {'num_units': 4096, 'nonlinearity':activation_function}),
 
         (DenseLayer, {'num_units': 2, 'nonlinearity': softmax}),
     ]
@@ -560,7 +560,7 @@ def build_network(verbose=False, **kwargs):
 
 
 
-from pretrained_models import build_vgg_16
+from pretrained_models import build_vgg_16, build_vgg_19, build_vgg_cnn_s
 def build_pretrained_network(verbose=False, **kwargs):
 #network_name, data_augmentation='full', lambda2=0.0005, max_epochs=50, nb_channels=3, crop_size=200,
                   #activation_function=rectify, batch_size=48, init_learning_rate=0.01, final_learning_rate=0.0001, dataset_ratio=3.8, final_ratio=2., verbose=False):
@@ -588,7 +588,7 @@ def build_pretrained_network(verbose=False, **kwargs):
     else:
         raise ValueError(data_augmentation+' is an unknown data augmentation strategy.')
 
-    layers = build_vgg_16(crop_size)
+    layers = build_vgg_19(crop_size)
 
     conv_net = NeuralNet(
         layers,

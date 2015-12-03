@@ -12,15 +12,14 @@ __date__ = '16/11/15'
 
 
 models = [#'VGG11-maxout_2015-11-23',
-          'VGG11_2015-11-23',
-          'VGG13_2015-11-23',
+          'VGG11_2015-12-03',
+          #'VGG13_2015-11-23',
           'VGG13-maxout_2015-11-23',
-          'AlexNet_2015-11-22',
           'reformed-gamblers_2015-11-23',
-          'VGG11-maxout_2015-11-28_pretrain',
+          'VGG11-maxout_2015-12-01',
           #'VGG13-maxout_2015-11-28_pretrain',
           #'MyNet_2015-11-27',
-          #'AlexNet_2015-11-27',
+          #'AlexNet_2015-12-01',
           #'VGG11_2015-11-28',
           ]
 

@@ -70,11 +70,53 @@ def build_vgg_16(size=224):
     net['pool5'] = PoolLayer(net['conv5_3'], 2)
     net['fc6'] = DenseLayer(net['pool5'], num_units=4096)
     net['fc7'] = DenseLayer(net['fc6'], num_units=4096)
-    net['fc8'] = DenseLayer(net['fc7'], num_units=2,
-                            nonlinearity=lasagne.nonlinearities.softmax)
+    net['fc8'] = DenseLayer(net['fc7'], num_units=1000, nonlinearity=None)
+    net['prob'] = NonlinearityLayer(net['fc8'], softmax)
 
-    model = pickle.load(open('vgg_16.pkl'))
+    model = pickle.load(open('vgg16.pkl'))
 
-    lasagne.layers.set_all_param_values(net['fc7'], model['values'][:-1])
+    #lasagne.layers.set_all_param_values(net['fc7'], model['param values'][:-2])
+    lasagne.layers.set_all_param_values(net['prob'], model['param values'])
 
+    net['fc8'] = DenseLayer(net['fc7'], num_units=2, nonlinearity=None, W=lasagne.init.GlorotUniform())
+    net['prob'] = NonlinearityLayer(net['fc8'], softmax)
+
+    return net
+
+# !wget https://s3.amazonaws.com/lasagne/recipes/pretrained/imagenet/vgg19_normalized.pkl
+# Note: tweaked to use average pooling instead of maxpooling
+def build_vgg_19(IMAGE_W=600):
+    net = {}
+    net['input'] = InputLayer((1, 3, IMAGE_W, IMAGE_W))
+    net['conv1_1'] = ConvLayer(net['input'], 64, 3, pad=1)
+    net['conv1_2'] = ConvLayer(net['conv1_1'], 64, 3, pad=1)
+    net['pool1'] = PoolLayer(net['conv1_2'], 2, mode='average_exc_pad')
+    net['conv2_1'] = ConvLayer(net['pool1'], 128, 3, pad=1)
+    net['conv2_2'] = ConvLayer(net['conv2_1'], 128, 3, pad=1)
+    net['pool2'] = PoolLayer(net['conv2_2'], 2, mode='average_exc_pad')
+    net['conv3_1'] = ConvLayer(net['pool2'], 256, 3, pad=1)
+    net['conv3_2'] = ConvLayer(net['conv3_1'], 256, 3, pad=1)
+    net['conv3_3'] = ConvLayer(net['conv3_2'], 256, 3, pad=1)
+    net['conv3_4'] = ConvLayer(net['conv3_3'], 256, 3, pad=1)
+    net['pool3'] = PoolLayer(net['conv3_4'], 2, mode='average_exc_pad')
+    net['conv4_1'] = ConvLayer(net['pool3'], 512, 3, pad=1)
+    net['conv4_2'] = ConvLayer(net['conv4_1'], 512, 3, pad=1)
+    net['conv4_3'] = ConvLayer(net['conv4_2'], 512, 3, pad=1)
+    net['conv4_4'] = ConvLayer(net['conv4_3'], 512, 3, pad=1)
+    net['pool4'] = PoolLayer(net['conv4_4'], 2, mode='average_exc_pad')
+    net['conv5_1'] = ConvLayer(net['pool4'], 512, 3, pad=1)
+    net['conv5_2'] = ConvLayer(net['conv5_1'], 512, 3, pad=1)
+    net['conv5_3'] = ConvLayer(net['conv5_2'], 512, 3, pad=1)
+    net['conv5_4'] = ConvLayer(net['conv5_3'], 512, 3, pad=1)
+    net['pool5'] = PoolLayer(net['conv5_4'], 2, mode='average_exc_pad')
+
+    values = pickle.load(open('vgg19_normalized.pkl'))['param values']
+    lasagne.layers.set_all_param_values(net['pool5'], values)
+    net['fc6'] = DenseLayer(net['pool5'], num_units=4096)
+    net['drop6'] = DropoutLayer(net['fc6'], p=0.5)
+    net['fc7'] = DenseLayer(net['drop6'], num_units=4096)
+    
+    #net['drop7'] = DropoutLayer(net['fc7'], p=0.5)
+    net['fc8'] = DenseLayer(net['fc7'], num_units=2, nonlinearity=lasagne.nonlinearities.softmax)
+	
     return net

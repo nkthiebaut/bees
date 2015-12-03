@@ -1,0 +1,38 @@
+using CUDNN backend
+Train:
+X.shape: (3968, 3, 224, 224)
+y.shape: (3968,)
+y value counts:  [ 827 3141]
+pictures size:  1.0
+Labels ratio: 3.80
+Input arguments: {'load': None, 'scale_delta': 0.1, 'test_file': 'test.npz', 'network': 'AlexNet', 'data_augmentation': 'resampling', 'final_ratio': 2.0, 'activation_function': <function rectify at 0x7f7a57a24b18>, 'train_file': 'train.npz', 'activation': 'rectify', 'max_trans': 5, 'batch_size': 128, 'dataset_ratio': 3.7980652962515116, 'patience': 5, 'angle_factor': 1.0, 'learning_init': 0.005, 'learning_final': 0.0001, 'max_epochs': 300, 'initial_ratio': None, 'nb_channels': 3, 'lambda2': 0.001, 'crop_size': 224}
+Resampling batch iterator parameters: {'count': 0, 'final_ratio': 2.0, 'nb_channels': 3, 'pad_size': 100, 'scale_delta': 0.1, 'output': <open file '<stdout>', mode 'w' at 0x7f7a931c8150>, 'dataset_ratio': 3.7980652962515116, 'batch_size': 128, 'angle_factor': 1.0, 'max_epochs': 300, 'max_trans': 5, 'shear': None, 'crop_size': 224}
+# Neural Network with 30846658 learnable parameters
+
+## Layer information
+
+name           size         total    cap.Y    cap.X    cov.Y    cov.X    filter Y    filter X    field Y    field X
+-------------  ---------  -------  -------  -------  -------  -------  ----------  ----------  ---------  ---------
+input0         3x224x224   150528   100.00   100.00   100.00   100.00         224         224        224        224
+conv2ddnn1     48x54x54    139968   100.00   100.00     4.91     4.91          11          11         11         11
+maxpool2ddnn2  48x26x26     32448   100.00   100.00     4.91     4.91          11          11         11         11
+conv2ddnn3     128x26x26    86528    65.22    65.22    10.27    10.27          15          15         23         23
+maxpool2ddnn4  128x12x12    18432    65.22    65.22    10.27    10.27          15          15         23         23
+conv2ddnn5     192x12x12    27648    65.85    65.85    18.30    18.30          27          27         41         41
+conv2ddnn6     192x12x12    27648    45.76    45.76    26.34    26.34          27          27         59         59
+conv2ddnn7     128x12x12    18432    35.06    35.06    34.38    34.38          27          27         77         77
+maxpool2ddnn8  128x5x5       3200    35.06    35.06    34.38    34.38          27          27         77         77
+dense9         4096          4096   100.00   100.00   100.00   100.00         224         224        224        224
+dropout10      4096          4096   100.00   100.00   100.00   100.00         224         224        224        224
+dense11        4096          4096   100.00   100.00   100.00   100.00         224         224        224        224
+dense12        2                2   100.00   100.00   100.00   100.00         224         224        224        224
+
+Explanation
+    X, Y:    image dimensions
+    cap.:    learning capacity
+    cov.:    coverage of image
+    [35mmagenta[0m: capacity too low (<1/6)
+    [36mcyan[0m:    image coverage too high (>100%)
+    [31mred[0m:     capacity too low and coverage too high
+
+

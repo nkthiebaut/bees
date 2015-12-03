@@ -59,8 +59,8 @@ else:
 exp_name = args['network']
 
 print "Input arguments:", args
-#conv_net = build_network(**args)
-conv_net = build_pretrained_network(**args)
+conv_net = build_network(**args)
+#conv_net = build_pretrained_network(**args)
 
 
 if args['load']:
