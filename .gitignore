@@ -6,3 +6,5 @@ params_*
 src/
 .idea*
 .ipy*
+*.png
+*.out
